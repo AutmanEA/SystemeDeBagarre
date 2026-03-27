@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://cl61ssncd228g"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_qhkmo"]
+load_path = "res://.godot/imported/Tileset1.png-be4d6cbc9457f9ee4e925d0aa04815bd.ctex"
+
+[node name="Tuile" type="Sprite2D" unique_id=1683065965]
+texture_filter = 1
+texture = SubResource("CompressedTexture2D_qhkmo")
+region_enabled = true
+region_rect = Rect2(0, 0, 32, 32)
