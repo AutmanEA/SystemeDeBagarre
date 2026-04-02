@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://dtw0ciw2w1sg3"]
+
+[ext_resource type="Script" uid="uid://ctxdfdw8wba76" path="res://Scenes/world.gd" id="1_f3sb7"]
+[ext_resource type="Resource" uid="uid://btypv0o1bb3a7" path="res://Ressources/tileWall.tres" id="2_8j60k"]
+[ext_resource type="PackedScene" uid="uid://cl61ssncd228g" path="res://Scenes/tile.tscn" id="2_go701"]
+[ext_resource type="Resource" uid="uid://seswfdm85xve" path="res://Ressources/tileFloor.tres" id="3_fo5ed"]
+
+[node name="Node" type="Node2D" unique_id=1988099869]
+y_sort_enabled = true
+script = ExtResource("1_f3sb7")
+data_wall = ExtResource("2_8j60k")
+data_floor = ExtResource("3_fo5ed")
+data_ally = ExtResource("3_fo5ed")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=374584855]
+offset_left = -109.0
+offset_top = -122.0
+offset_right = 1206.0
+offset_bottom = 705.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=399771809]
+anchor_mode = 0
+limit_left = -446
+limit_top = -269
+limit_right = 432
+limit_bottom = 249
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+
+[node name="Tile" parent="." unique_id=595987141 instance=ExtResource("2_go701")]
+visible = false
+
+[connection signal="tile_clicked" from="Tile" to="." method="_on_tile_clicked"]

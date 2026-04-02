@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TileTypeData" format=3 uid="uid://btypv0o1bb3a7"]
+
+[ext_resource type="Script" uid="uid://rjahbpdt3k7" path="res://Data/tile_data.gd" id="1_tua7w"]
+
+[resource]
+script = ExtResource("1_tua7w")
+tile_name = "wall"
+is_pickable = false
+altitude_min = 70.0
+altitude_max = 80.0
+base_colors = Array[Color]([Color(0.9764706, 0.25882354, 0.24705882, 1)])
+metadata/_custom_type_script = "uid://rjahbpdt3k7"

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TileTypeData" format=3 uid="uid://seswfdm85xve"]
+
+[ext_resource type="Script" uid="uid://rjahbpdt3k7" path="res://Data/tile_data.gd" id="1_tpr3t"]
+
+[resource]
+script = ExtResource("1_tpr3t")
+tile_name = "floor"
+is_walkable = true
+altitude_max = 6.0
+base_colors = Array[Color]([Color(0.95686275, 0.8352941, 0.6666667, 1), Color(0.95686275, 0.81960785, 0.6313726, 1), Color(0.9607843, 0.85490197, 0.6901961, 1)])
+thickness_darken = 0.05
+metadata/_custom_type_script = "uid://rjahbpdt3k7"

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmbm0f4er0qbd"
-path="res://.godot/imported/Elements.png-5b7db72cd3641e45af2f6bac494eca48.ctex"
+uid="uid://bfrguv357ybes"
+path="res://.godot/imported/hexagon_test.png-6b55d6d70b114c519ab6f9167a785105.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://TileSet_asset/Elements/Elements.png"
-dest_files=["res://.godot/imported/Elements.png-5b7db72cd3641e45af2f6bac494eca48.ctex"]
+source_file="res://assets/hexagon_test.png"
+dest_files=["res://.godot/imported/hexagon_test.png-6b55d6d70b114c519ab6f9167a785105.ctex"]
 
 [params]
 
