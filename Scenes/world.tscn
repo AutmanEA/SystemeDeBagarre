@@ -4,6 +4,7 @@
 [ext_resource type="Resource" uid="uid://btypv0o1bb3a7" path="res://Ressources/tileWall.tres" id="2_8j60k"]
 [ext_resource type="PackedScene" uid="uid://cl61ssncd228g" path="res://Scenes/tile.tscn" id="2_go701"]
 [ext_resource type="Resource" uid="uid://seswfdm85xve" path="res://Ressources/tileFloor.tres" id="3_fo5ed"]
+[ext_resource type="PackedScene" uid="uid://rstxrruovjgl" path="res://Scenes/pawn.tscn" id="5_fo5ed"]
 
 [node name="Node" type="Node2D" unique_id=1988099869]
 y_sort_enabled = true
@@ -32,4 +33,9 @@ drag_vertical_enabled = true
 [node name="Tile" parent="." unique_id=595987141 instance=ExtResource("2_go701")]
 visible = false
 
+[node name="Pawn" parent="." unique_id=1734967744 instance=ExtResource("5_fo5ed")]
+visible = false
+position = Vector2(88, 76)
+
 [connection signal="tile_clicked" from="Tile" to="." method="_on_tile_clicked"]
+[connection signal="pawn_clicked" from="Pawn" to="." method="_on_pawn_clicked"]

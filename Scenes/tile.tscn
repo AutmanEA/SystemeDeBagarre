@@ -6,6 +6,9 @@
 script = ExtResource("1_rvq8p")
 type = 2
 
+[node name="Tile_CollisionPolygon" type="CollisionPolygon2D" parent="." unique_id=450702161]
+polygon = PackedVector2Array(-64, 32, 0, 64, 64, 32, 64, -32, 0, -64, -64, -32)
+
 [node name="Tile_Thickness" type="Polygon2D" parent="." unique_id=1838104506]
 color = Color(0.41981313, 0.41981313, 0.4198131, 1)
 antialiased = true
@@ -25,9 +28,6 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 antialiased = true
-
-[node name="Tile_CollisionPolygon" type="CollisionPolygon2D" parent="." unique_id=450702161]
-polygon = PackedVector2Array(-64, 32, 0, 64, 64, 32, 64, -32, 0, -64, -64, -32)
 
 [connection signal="input_event" from="." to="." method="_on_input_event"]
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]

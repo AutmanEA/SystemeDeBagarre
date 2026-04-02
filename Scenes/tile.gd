@@ -71,7 +71,6 @@ func setup_type():
 		else:
 			var pattern = posmod(q - r, data.base_colors.size())
 			target_color = data.base_colors[pattern]
-	 
 	
 	$Tile_Sprite.color = target_color
 	$Tile_Thickness.modulate = target_color.darkened(data.thickness_darken)
@@ -84,18 +83,18 @@ func setup_type():
 
 func _update_outline() -> void:
 	if is_selected:
-		outline.width = 3.0
-		outline.default_color = Color.RED
-		outline.z_index = 50
-		outline.position.y = poly_sprite.position.y 
+		var pattern = posmod(q - r, data.base_colors.size())
+		var selected_color = Color.DIM_GRAY
+		poly_sprite.self_modulate = selected_color
+		outline.width = 0.0
 	elif is_hovered and input_pickable:
 		outline.width = 2.0
-		outline.z_index = 50
 		outline.default_color = Color.WHITE
-		outline.position.y = poly_sprite.position.y
+		outline.position.y = poly_sprite.position.y - 2
 	else:
 		outline.width = 0.0
 		outline.z_index = 0
+		poly_sprite.self_modulate = Color.WHITE
 
 
 func hex_to_pixel_position() -> Vector2:
@@ -114,9 +113,10 @@ func _get_varied_color(base_color: Color) -> Color:
 	return Color(color_r, color_g, color_b).clamp() # clamp() évite de dépasser le blanc pur ou le noir
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
-	if event is InputEventMouseButton and event.pressed:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		print_own_info()
 		tile_clicked.emit(self)
+		get_viewport().set_input_as_handled()
 
 
 func print_own_info():
