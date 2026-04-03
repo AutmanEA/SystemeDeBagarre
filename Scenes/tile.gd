@@ -2,6 +2,7 @@ class_name Tile
 extends Area2D
 
 signal tile_clicked(tile_instance)
+signal tile_hovered(tile_instance)
 
 @export var data: TileTypeData
 
@@ -24,8 +25,6 @@ var r
 @onready var poly_sprite: Polygon2D = $Tile_Sprite
 
 func _ready() -> void:
-
-	
 	outline.points = poly_sprite.polygon
 	_update_outline()
 	pass # Replace with function body.
@@ -43,6 +42,7 @@ func setup(_q : int, _r : int):
 	self.position = hex_to_pixel_position()
 	
 	self.input_pickable = true
+		
 	
 	setup_type()
 
@@ -58,6 +58,8 @@ func setup_type():
 		
 	self.is_walkable = data.is_walkable
 	self.input_pickable = data.is_pickable
+	
+	$Tile_Sprite.z_index = data.z_order
 	
 	altitude = randf_range(data.altitude_min, data.altitude_max)
 	$Tile_CollisionPolygon.position.y = -altitude
@@ -83,9 +85,7 @@ func setup_type():
 
 func _update_outline() -> void:
 	if is_selected:
-		var pattern = posmod(q - r, data.base_colors.size())
-		var selected_color = Color.DIM_GRAY
-		poly_sprite.self_modulate = selected_color
+		poly_sprite.self_modulate = Color.DIM_GRAY
 		outline.width = 0.0
 	elif is_hovered and input_pickable:
 		outline.width = 2.0
@@ -116,8 +116,6 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> voi
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		print_own_info()
 		tile_clicked.emit(self)
-		get_viewport().set_input_as_handled()
-
 
 func print_own_info():
 	print("Tile position -> ", self.q, " ", self.r)
@@ -127,6 +125,7 @@ func print_own_info():
 func _on_mouse_entered() -> void:
 	is_hovered = true
 	_update_outline()
+	tile_hovered.emit(self)
 
 func _on_mouse_exited() -> void:
 	is_hovered = false
@@ -135,3 +134,9 @@ func _on_mouse_exited() -> void:
 func set_selected(selected: bool) -> void:
 	is_selected = selected
 	_update_outline()
+
+func set_reachable(reachable: bool) -> void:
+	if reachable:
+		poly_sprite.modulate = Color(0.5, 0.8, 1.5) # Teinte bleutée et lumineuse
+	else:
+		poly_sprite.modulate = Color.WHITE # Retour à la normale

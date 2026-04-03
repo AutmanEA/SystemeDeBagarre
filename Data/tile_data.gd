@@ -12,3 +12,5 @@ extends Resource
 @export_category("Colors")
 @export var base_colors: Array[Color] = [Color.WHITE]
 @export var thickness_darken: float = 0.55
+
+@export var z_order: int  = 0

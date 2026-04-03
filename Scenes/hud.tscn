@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://1q8j7o38k1rv"]
+
+[ext_resource type="Script" uid="uid://stb7s36pliks" path="res://Scenes/hud.gd" id="1_e0onf"]
+
+[node name="Hud" type="CanvasLayer" unique_id=1206000801]
+script = ExtResource("1_e0onf")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1900401589]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_bottom = 20
+
+[node name="HBox_Actions" type="HBoxContainer" parent="MarginContainer" unique_id=474912362]
+layout_mode = 2
+alignment = 1
+
+[node name="Btn_Move" type="Button" parent="MarginContainer/HBox_Actions" unique_id=1090660057]
+layout_mode = 2
+text = "Move"

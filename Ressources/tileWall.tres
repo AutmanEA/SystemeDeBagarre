@@ -9,4 +9,5 @@ is_pickable = false
 altitude_min = 70.0
 altitude_max = 80.0
 base_colors = Array[Color]([Color(0.9764706, 0.25882354, 0.24705882, 1)])
+z_order = 100
 metadata/_custom_type_script = "uid://rjahbpdt3k7"
