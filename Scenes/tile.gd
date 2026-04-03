@@ -135,8 +135,25 @@ func set_selected(selected: bool) -> void:
 	is_selected = selected
 	_update_outline()
 
+var pulse_tween: Tween # On garde une trace du tween pour pouvoir l'arrêter
+
 func set_reachable(reachable: bool) -> void:
-	if reachable:
-		poly_sprite.modulate = Color(0.5, 0.8, 1.5) # Teinte bleutée et lumineuse
-	else:
-		poly_sprite.modulate = Color.WHITE # Retour à la normale
+		if reachable:
+			# On crée l'animation
+			pulse_tween = create_tween()
+
+			# Le secret : on lui dit de boucler à l'infini !
+			pulse_tween.set_loops() 
+
+			# Étape 1 : On descend à 30% d'opacité en 0.8 seconde
+			pulse_tween.tween_property(self, "modulate", Color(0.808, 0.824, 1.0, 1.0), 0.8).set_trans(Tween.TRANS_SINE)
+			# Étape 2 : On remonte à 80% d'opacité en 0.8 seconde
+			pulse_tween.tween_property(self, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.8).set_trans(Tween.TRANS_SINE)
+
+		else:
+		# Quand on désélectionne, on tue l'animation si elle existe
+			if pulse_tween:
+				pulse_tween.kill()
+
+			# Et on remet la tuile à 100% opaque
+			self.modulate = Color.WHITE
