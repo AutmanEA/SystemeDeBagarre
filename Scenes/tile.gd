@@ -20,13 +20,12 @@ var r
 @export var altitude: float = 0.0 # On remplace la constante par une variable
 @export var color_variation: float = 0.1 # 10% de variation de couleur
 
-@onready var original_thickness_polygon = $Tile_Thickness.polygon.duplicate()
 @onready var outline: Line2D = $Tile_Outline
 @onready var poly_sprite: Polygon2D = $Tile_Sprite
 
 func _ready() -> void:
 	outline.points = poly_sprite.polygon
-	_update_outline()
+	_update_visuals()
 	pass # Replace with function body.
 
 
@@ -40,25 +39,20 @@ func setup(_q : int, _r : int):
 	
 	self.scale = Vector2(1.0, 0.5)
 	self.position = hex_to_pixel_position()
-	
 	self.input_pickable = true
-		
 	
 	setup_type()
-
-		
+	
 	return self
-
 
 func setup_type():
 	if data == null:
 		self.hide()
 		self.input_pickable = false
 		return
-		
+
 	self.is_walkable = data.is_walkable
 	self.input_pickable = data.is_pickable
-	
 	$Tile_Sprite.z_index = data.z_order
 	
 	altitude = randf_range(data.altitude_min, data.altitude_max)
@@ -66,30 +60,28 @@ func setup_type():
 	$Tile_Sprite.position.y = -altitude
 	
 	var target_color = Color.WHITE
-	
 	if data.base_colors.size() > 0:
 		if data.base_colors.size() == 1:
 			target_color = _get_varied_color(data.base_colors[0])
 		else:
 			var pattern = posmod(q - r, data.base_colors.size())
 			target_color = data.base_colors[pattern]
-	
+
 	$Tile_Sprite.color = target_color
+	
 	$Tile_Thickness.modulate = target_color.darkened(data.thickness_darken)
+	$Tile_Thickness.polygon[0].y -= altitude
+	$Tile_Thickness.polygon[1].y -= altitude
+	$Tile_Thickness.polygon[2].y -= altitude
 
-	var new_poly = original_thickness_polygon.duplicate()
-	new_poly[0].y -= altitude
-	new_poly[1].y -= altitude
-	new_poly[2].y -= altitude
-	$Tile_Thickness.polygon = new_poly
-
-func _update_outline() -> void:
+func _update_visuals() -> void:
 	if is_selected:
-		poly_sprite.self_modulate = Color.DIM_GRAY
-		outline.width = 0.0
+		# poly_sprite.self_modulate = Color.DIM_GRAY -> VISUEL A METTRE A JOUR ?
+		outline.width = 3.0
+		outline.position.y = poly_sprite.position.y - 1
 	elif is_hovered and input_pickable:
 		outline.width = 2.0
-		outline.default_color = Color.WHITE
+		outline.default_color = Color.WHITE_SMOKE
 		outline.position.y = poly_sprite.position.y - 2
 	else:
 		outline.width = 0.0
@@ -106,54 +98,38 @@ func hex_to_pixel_position() -> Vector2:
 	return tile_position
 
 func _get_varied_color(base_color: Color) -> Color:
-	# On fait varier légèrement le Rouge, Vert et Bleu
 	var color_r = base_color.r + randf_range(-color_variation, color_variation)
 	var color_g = base_color.g + randf_range(-color_variation, color_variation)
 	var color_b = base_color.b + randf_range(-color_variation, color_variation)
-	return Color(color_r, color_g, color_b).clamp() # clamp() évite de dépasser le blanc pur ou le noir
+	return Color(color_r, color_g, color_b).clamp()
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		print_own_info()
+		# TODO: lancer une fonction qui permet d'afficher les infos qqpart dans le HUD,
+		# uniquement si y a des choses dedans je suppose, genre un effet particulier...,
+		# ou alors tout le temps et ça donne la range par rapport au personnage en cours
+		print_own_info() # temporaire
 		tile_clicked.emit(self)
 
 func print_own_info():
 	print("Tile position -> ", self.q, " ", self.r)
 	print("Tile type -> ", self.data.tile_name)
 
-
 func _on_mouse_entered() -> void:
 	is_hovered = true
-	_update_outline()
+	_update_visuals()
 	tile_hovered.emit(self)
 
 func _on_mouse_exited() -> void:
 	is_hovered = false
-	_update_outline()
+	_update_visuals()
 
 func set_selected(selected: bool) -> void:
 	is_selected = selected
-	_update_outline()
+	_update_visuals()
 
-var pulse_tween: Tween # On garde une trace du tween pour pouvoir l'arrêter
-
-func set_reachable(reachable: bool) -> void:
-		if reachable:
-			# On crée l'animation
-			pulse_tween = create_tween()
-
-			# Le secret : on lui dit de boucler à l'infini !
-			pulse_tween.set_loops() 
-
-			# Étape 1 : On descend à 30% d'opacité en 0.8 seconde
-			pulse_tween.tween_property(self, "modulate", Color(0.808, 0.824, 1.0, 1.0), 0.8).set_trans(Tween.TRANS_SINE)
-			# Étape 2 : On remonte à 80% d'opacité en 0.8 seconde
-			pulse_tween.tween_property(self, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.8).set_trans(Tween.TRANS_SINE)
-
-		else:
-		# Quand on désélectionne, on tue l'animation si elle existe
-			if pulse_tween:
-				pulse_tween.kill()
-
-			# Et on remet la tuile à 100% opaque
-			self.modulate = Color.WHITE
+func set_reachable(reachable: bool, color: Color = Color.WHITE) -> void:
+	if reachable:
+		self.modulate = color
+	else:
+		self.modulate = Color.WHITE

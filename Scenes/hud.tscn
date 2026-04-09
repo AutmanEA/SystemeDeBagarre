@@ -21,3 +21,11 @@ alignment = 1
 [node name="Btn_Move" type="Button" parent="MarginContainer/HBox_Actions" unique_id=1090660057]
 layout_mode = 2
 text = "Move"
+
+[node name="Btn_Melee" type="Button" parent="MarginContainer/HBox_Actions" unique_id=1442075850]
+layout_mode = 2
+text = "Melee"
+
+[node name="Btn_Range" type="Button" parent="MarginContainer/HBox_Actions" unique_id=327002249]
+layout_mode = 2
+text = "Range"
