@@ -12,12 +12,14 @@ enum e_game_state {
 
 var current_state: e_game_state = e_game_state.NEUTRAL
 var reachable_tiles: Dictionary = {}
+var targetable_tiles: Array = []
 
 func _on_hud_action_selected(action: String) -> void:
+	if world.current_pawn == null:
+		return
 	match action:
 		"move":
-			if world.current_pawn != null:
-				current_state = e_game_state.MOVING
+			current_state = e_game_state.MOVING
 		"melee":
 			current_state = e_game_state.ATTACKING_MELEE
 		"range":
@@ -25,9 +27,9 @@ func _on_hud_action_selected(action: String) -> void:
 	action_preparation()
 
 func action_preparation():
+	var start = Vector2(world.current_pawn.q, world.current_pawn.r)
 	match current_state:
 		e_game_state.MOVING:
-			var start = Vector2(world.current_pawn.q, world.current_pawn.r)
 			reachable_tiles = PathfindingHelper.get_reachable_tiles(world.grid, world.pawns, start, 3)
 			for coord in reachable_tiles.keys():
 				world.grid[coord].set_reachable(true, Color.LIGHT_BLUE)
@@ -36,7 +38,9 @@ func action_preparation():
 			pass
 			
 		e_game_state.ATTACKING_RANGE:
-			pass
+			targetable_tiles = PathfindingHelper.get_field_of_view(world.grid, start, 2, 4)
+			for coord in targetable_tiles:
+				world.grid[coord].set_targetable(true, Color.DARK_ORANGE)
 			
 		e_game_state.NEUTRAL:
 			pass
@@ -51,7 +55,7 @@ func action_watcher(target_coord: Vector2) -> void:
 			action_melee()
 			
 		e_game_state.ATTACKING_RANGE:
-			action_range()
+			action_range(target_coord)
 			
 		e_game_state.NEUTRAL:
 			pass
@@ -79,7 +83,23 @@ func action_move(target_coord: Vector2) -> void:
 		world.current_pawn.position = world.grid[target_coord].position
 
 func action_melee():
+
 	print("melee")
 
-func action_range():
-	print("range")
+func action_range(target_coord):
+	var current_coord: Vector2 = Vector2(world.current_pawn.q, world.current_pawn.r)
+	
+	if current_state != e_game_state.ATTACKING_RANGE:
+		return
+		
+	# TODO : faire qq chose quand on clic qqpart
+	# il me faut un 2eme pawn
+	if world.pawns.has(target_coord) and targetable_tiles.has(target_coord):
+		print("y a un méchant je le tape")
+		var enemy_pawn = world.pawns[target_coord]
+		enemy_pawn.queue_free()
+		world.pawns.erase(target_coord)
+
+	for c in targetable_tiles:
+		world.grid[c].set_targetable(false)
+	targetable_tiles.clear()

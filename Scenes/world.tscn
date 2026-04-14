@@ -26,10 +26,10 @@ color = Color(0, 0, 0, 1)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=399771809]
 anchor_mode = 0
-limit_left = -446
-limit_top = -269
-limit_right = 432
-limit_bottom = 249
+limit_left = 167
+limit_top = 25
+limit_right = 1045
+limit_bottom = 543
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 

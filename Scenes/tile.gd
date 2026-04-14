@@ -133,3 +133,9 @@ func set_reachable(reachable: bool, color: Color = Color.WHITE) -> void:
 		self.modulate = color
 	else:
 		self.modulate = Color.WHITE
+
+func set_targetable(targetable: bool, color: Color = Color.WHITE) -> void:
+	if targetable:
+		self.modulate = color
+	else:
+		self.modulate = Color.WHITE
