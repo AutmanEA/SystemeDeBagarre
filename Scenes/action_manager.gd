@@ -28,9 +28,10 @@ func _on_hud_action_selected(action: String) -> void:
 
 func action_preparation():
 	var start = Vector2(world.current_pawn.q, world.current_pawn.r)
+	var pathfinder = PathfindingHelper.new(world.grid, world.pawns)
 	match current_state:
 		e_game_state.MOVING:
-			reachable_tiles = PathfindingHelper.get_reachable_tiles(world.grid, world.pawns, start, 3)
+			reachable_tiles = pathfinder.get_reachable_tiles(start, 3)
 			for coord in reachable_tiles.keys():
 				world.grid[coord].set_reachable(true, Color.LIGHT_BLUE)
 			
@@ -38,7 +39,7 @@ func action_preparation():
 			pass
 			
 		e_game_state.ATTACKING_RANGE:
-			targetable_tiles = PathfindingHelper.get_field_of_view(world.grid, start, 2, 4)
+			targetable_tiles = pathfinder.get_field_of_view(start, 1, 4)
 			for coord in targetable_tiles:
 				world.grid[coord].set_targetable(true, Color.DARK_ORANGE)
 			
@@ -87,13 +88,10 @@ func action_melee():
 	print("melee")
 
 func action_range(target_coord):
-	var current_coord: Vector2 = Vector2(world.current_pawn.q, world.current_pawn.r)
 	
 	if current_state != e_game_state.ATTACKING_RANGE:
 		return
 		
-	# TODO : faire qq chose quand on clic qqpart
-	# il me faut un 2eme pawn
 	if world.pawns.has(target_coord) and targetable_tiles.has(target_coord):
 		print("y a un méchant je le tape")
 		var enemy_pawn = world.pawns[target_coord]
