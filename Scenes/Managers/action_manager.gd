@@ -61,27 +61,34 @@ func action_preparation():
 
 
 func action_watcher(target_coord: Vector2) -> void:
+	var cost: int = 0
+	
 	match current_state:
 		e_game_state.MOVING:
-			action_move(target_coord)
+			cost = action_move(target_coord)
 			
 		e_game_state.ATTACKING_MELEE:
-			action_melee(target_coord)
+			cost = action_melee(target_coord)
 			
 		e_game_state.ATTACKING_RANGE:
-			action_range(target_coord)
+			cost = action_range(target_coord)
 			
 		e_game_state.NEUTRAL:
 			pass
 
+	#verifier si il a assez d'init pour faire une action avant tout ca
+	world.current_pawn.data.init -= cost
+	print(world.current_pawn.data.init)
+	
+	
 	current_state = e_game_state.NEUTRAL
 
-func action_move(target_coord: Vector2) -> void:
+func action_move(target_coord: Vector2) -> int:
 
 	var current_coord: Vector2 = Vector2(world.current_pawn.q, world.current_pawn.r)
 
 	if current_state != e_game_state.MOVING:
-		return
+		return 0
 
 	if reachable_tiles.has(target_coord):
 		
@@ -91,14 +98,14 @@ func action_move(target_coord: Vector2) -> void:
 		world.current_pawn.set_hex_coords(int(target_coord.x), int(target_coord.y))
 		world.current_pawn.position = world.grid[target_coord].position
 
-
+	var distance = PathfindingHelper.new(world.grid, world.pawns).get_tile_distance(current_coord.x - target_coord.x, current_coord.y - target_coord.y)
 	action_clear()
-	
+	return 1 + distance #action_cost
 
-func action_melee(target_coord):
+func action_melee(target_coord) -> int:
 	
 	if current_state != e_game_state.ATTACKING_MELEE:
-		return
+		return 0
 	
 	if world.pawns.has(target_coord) and targetable_tiles.has(target_coord):
 		print("y a un méchant je le tape EN MELEE")
@@ -107,11 +114,12 @@ func action_melee(target_coord):
 		world.pawns.erase(target_coord)
 
 	action_clear()
+	return 4 #attention cout a adapter selon arme
 
-func action_range(target_coord):
+func action_range(target_coord) -> int:
 	
 	if current_state != e_game_state.ATTACKING_RANGE:
-		return
+		return 0
 		
 	if world.pawns.has(target_coord) and targetable_tiles.has(target_coord):
 		print("y a un méchant je le tape A DISTANCE")
@@ -120,3 +128,4 @@ func action_range(target_coord):
 		world.pawns.erase(target_coord)
 
 	action_clear()
+	return 3 #attention cout a adapter selon arme

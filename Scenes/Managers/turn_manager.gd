@@ -5,10 +5,15 @@ extends Node
 @export var timeline_ui: Timeline
 var current_turn_order: Array = []
 
-func start_combat(all_pawns: Array) -> void:
-	current_turn_order = all_pawns.duplicate()
+func start_combat(pawns: Array) -> void:
+	current_turn_order = pawns.duplicate()
 	
-	# (Ici plus tard : tu pourras trier le tableau avec un custom sort 
-	# pour mettre le pion le plus rapide en premier)
+	current_turn_order.sort_custom(func(a, b): return a.data.init > b.data.init)
 	
 	timeline_ui.generate_visuals(current_turn_order)
+
+#je suppose qu'il faut faire un truc du style pour update tout le tour apres une action d'un joueur
+func update_turn() -> void:
+	current_turn_order.sort_custom(func(a, b): return a.data.init > b.data.init)
+	timeline_ui.generate_visuals(current_turn_order)
+	

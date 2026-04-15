@@ -8,6 +8,7 @@ var pawns: Dictionary = {}
 
 @onready var select_manager = $SelectManager
 @onready var action_manager = $ActionManager
+@onready var turn_manager = $TurnManager
 
 @onready var hud: ActionsHUD = $ActionsHUD
 
@@ -45,10 +46,18 @@ func _ready() -> void:
 	generate_map(map)
 	spawn_pawn(4, 5, data_ally)
 	spawn_pawn(6, 7, data_enemy)
-	spawn_pawn(7, 5, data_enemy)
+	#spawn_pawn(7, 5, data_enemy) #1v1 pour l'instant c'est pas mal
 	
+	
+	#remplacer par un truc qui find le premier avec le plus grand init pour le current pawn
 	current_pawn = pawns[Vector2(4, 5)]
 	
+	var all_pawns = []
+	for p in pawns:
+		all_pawns.append(pawns[p])
+	
+	turn_manager.start_combat(all_pawns)
+	#quand un tour est fini ca doit changer le current pawn
 	
 	hud.action_selected.connect(action_manager._on_hud_action_selected)
 

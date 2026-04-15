@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://rstxrruovjgl" path="res://Scenes/Objects/pawn.tscn" id="7_b3802"]
 [ext_resource type="PackedScene" uid="uid://1q8j7o38k1rv" path="res://Scenes/HUD/actions.tscn" id="8_fevyy"]
 [ext_resource type="PackedScene" uid="uid://bpcpv83y4a8dt" path="res://Scenes/HUD/timeline.tscn" id="9_hibaj"]
+[ext_resource type="PackedScene" uid="uid://cswvi6adxk56e" path="res://Scenes/HUD/portrait.tscn" id="10_fdnlq"]
 [ext_resource type="Script" uid="uid://clwm6rvc243ff" path="res://Scenes/Managers/select_manager.gd" id="10_pdsj5"]
 [ext_resource type="Script" uid="uid://b8x5ylq5fjqj3" path="res://Scenes/Managers/action_manager.gd" id="11_ee4r6"]
 [ext_resource type="Script" uid="uid://cg7ah8lybnsaa" path="res://Scenes/Managers/turn_manager.gd" id="12_gt3je"]
@@ -49,6 +50,7 @@ data = ExtResource("5_k12tt")
 [node name="ActionsHUD" parent="." unique_id=1206000801 instance=ExtResource("8_fevyy")]
 
 [node name="TimelineHUD" parent="." unique_id=1589750245 instance=ExtResource("9_hibaj")]
+item_scene = ExtResource("10_fdnlq")
 
 [node name="SelectManager" type="Node" parent="." unique_id=555990247]
 script = ExtResource("10_pdsj5")
@@ -56,8 +58,9 @@ script = ExtResource("10_pdsj5")
 [node name="ActionManager" type="Node" parent="." unique_id=545366920]
 script = ExtResource("11_ee4r6")
 
-[node name="TurnManager" type="Node" parent="." unique_id=1018587200]
+[node name="TurnManager" type="Node" parent="." unique_id=1018587200 node_paths=PackedStringArray("timeline_ui")]
 script = ExtResource("12_gt3je")
+timeline_ui = NodePath("../TimelineHUD")
 
 [connection signal="tile_clicked" from="Tile" to="." method="_on_tile_clicked"]
 [connection signal="pawn_clicked" from="Pawn" to="." method="_on_pawn_clicked"]
