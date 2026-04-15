@@ -4,17 +4,22 @@
 [ext_resource type="Resource" uid="uid://btypv0o1bb3a7" path="res://Ressources/tileWall.tres" id="2_8j60k"]
 [ext_resource type="PackedScene" uid="uid://cl61ssncd228g" path="res://Scenes/tile.tscn" id="2_go701"]
 [ext_resource type="Resource" uid="uid://seswfdm85xve" path="res://Ressources/tileFloor.tres" id="3_fo5ed"]
+[ext_resource type="Resource" uid="uid://cpgg3bisfjuvl" path="res://Ressources/pawnGood.tres" id="4_ikia7"]
 [ext_resource type="PackedScene" uid="uid://rstxrruovjgl" path="res://Scenes/pawn.tscn" id="5_fo5ed"]
+[ext_resource type="Resource" uid="uid://fvfue5ekjdx1" path="res://Ressources/pawnEvil.tres" id="6_0fj1v"]
 [ext_resource type="PackedScene" uid="uid://1q8j7o38k1rv" path="res://Scenes/hud.tscn" id="6_5ukr8"]
 [ext_resource type="Script" uid="uid://clwm6rvc243ff" path="res://Scenes/select_manager.gd" id="7_o06y3"]
 [ext_resource type="Script" uid="uid://b8x5ylq5fjqj3" path="res://Scenes/action_manager.gd" id="8_k7acu"]
+[ext_resource type="Script" uid="uid://cg7ah8lybnsaa" path="res://Scenes/turn_manager.gd" id="9_5v1tr"]
+[ext_resource type="PackedScene" uid="uid://bpcpv83y4a8dt" path="res://Scenes/timeline.tscn" id="9_7yui6"]
 
 [node name="World" type="Node2D" unique_id=1988099869]
 y_sort_enabled = true
 script = ExtResource("1_f3sb7")
 data_wall = ExtResource("2_8j60k")
 data_floor = ExtResource("3_fo5ed")
-data_ally = ExtResource("3_fo5ed")
+data_ally = ExtResource("4_ikia7")
+data_enemy = ExtResource("6_0fj1v")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=374584855]
 offset_left = -109.0
@@ -39,14 +44,20 @@ visible = false
 [node name="Pawn" parent="." unique_id=1734967744 instance=ExtResource("5_fo5ed")]
 visible = false
 position = Vector2(88, 76)
+data = ExtResource("6_0fj1v")
 
 [node name="Hud" parent="." unique_id=1206000801 instance=ExtResource("6_5ukr8")]
+
+[node name="Timeline" parent="." unique_id=1589750245 instance=ExtResource("9_7yui6")]
 
 [node name="SelectManager" type="Node" parent="." unique_id=555990247]
 script = ExtResource("7_o06y3")
 
 [node name="ActionManager" type="Node" parent="." unique_id=545366920]
 script = ExtResource("8_k7acu")
+
+[node name="TurnManager" type="Node" parent="." unique_id=1018587200]
+script = ExtResource("9_5v1tr")
 
 [connection signal="tile_clicked" from="Tile" to="." method="_on_tile_clicked"]
 [connection signal="pawn_clicked" from="Pawn" to="." method="_on_pawn_clicked"]

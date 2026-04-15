@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="PawnTypeData" format=3 uid="uid://cpgg3bisfjuvl"]
+
+[ext_resource type="Script" uid="uid://c8bks0j6ww3py" path="res://Data/pawn_data.gd" id="1_l5bnc"]
+
+[resource]
+script = ExtResource("1_l5bnc")
+pawn_name = "Aly l'allié"
+tmp_max_range = 5
+color = Color(0.6799096, 0.87585044, 0.6664478, 1)
+metadata/_custom_type_script = "uid://c8bks0j6ww3py"

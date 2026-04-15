@@ -15,6 +15,7 @@ var is_selected: bool = false
 var q: int
 var r: int
 
+@export var data: PawnTypeData
 
 func _ready() -> void:
 	input_event.connect(_on_input_event)
@@ -26,7 +27,13 @@ func _ready() -> void:
 	sprite_thickness.position.y = -sprite_offset
 	$BaseCollision.position.y = -sprite_offset
 	$Figurine.position.y = -sprite_offset
-
+	
+	#setup
+	$Pawn_Thickness.self_modulate = data.color
+	$Pawn_Border.self_modulate = data.color
+	$Pawn_Top.self_modulate = data.color
+	
+	
 	_update_visuals()
 
 func set_hex_coords(_q: int, _r: int) -> void:

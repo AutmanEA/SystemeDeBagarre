@@ -13,13 +13,14 @@ var pawns: Dictionary = {}
 
 @export var data_wall: TileTypeData
 @export var data_floor: TileTypeData
-@export var data_ally: TileTypeData
+
+@export var data_ally: PawnTypeData
+@export var data_enemy: PawnTypeData
 
 @onready var tile_data_map = {
 	g_enums.e_tile.Null: null,
 	g_enums.e_tile.Wall: data_wall,
 	g_enums.e_tile.Floor: data_floor,
-	g_enums.e_tile.Ally: data_floor,
 }
 
 var selected_tile: Tile = null
@@ -30,7 +31,7 @@ const map = [
 	[0,0,1,1,1,1,1,1,1,0,0,0,0,0],
 	[0,0,1,1,1,1,1,0,0,0,0,1,1,0],
 	[0,0,1,1,1,1,1,0,1,1,1,1,0,1],
-	[0,1,2,2,2,2,2,3,2,1,2,2,2,1],
+	[0,1,2,2,2,2,2,2,2,1,2,2,2,1],
 	[1,1,2,2,2,2,2,2,2,1,2,2,1,1],
 	[1,1,2,2,2,1,1,2,2,2,2,2,1,1],
 	[1,1,2,1,2,2,2,2,2,2,2,2,1,1],
@@ -42,9 +43,9 @@ const map = [
 
 func _ready() -> void:
 	generate_map(map)
-	spawn_pawn(4, 5)
-	spawn_pawn(6, 7)
-	spawn_pawn(7, 5)
+	spawn_pawn(4, 5, data_ally)
+	spawn_pawn(6, 7, data_enemy)
+	spawn_pawn(7, 5, data_enemy)
 	
 	current_pawn = pawns[Vector2(4, 5)]
 	
@@ -82,7 +83,7 @@ func generate_map(map_brute):
 			grid[coord] = new_tile
 			
 
-func spawn_pawn(target_q: int, target_r: int) -> void:
+func spawn_pawn(target_q: int, target_r: int, pawn_data: PawnTypeData) -> void:
 	var coord = Vector2(target_q, target_r)
 	
 	# 1. Vérifications de sécurité
@@ -104,6 +105,9 @@ func spawn_pawn(target_q: int, target_r: int) -> void:
 	# 3. Placement ! 
 	# On triche intelligemment : au lieu de recalculer les maths (hex_to_pixel),
 	# on copie directement la position de la tuile cible !
+	
+	new_pawn.data = pawn_data
+	
 	new_pawn.position = grid[coord].position
 	new_pawn.set_hex_coords(target_q, target_r)
 	new_pawn.pawn_clicked.connect(_on_object_clicked)

@@ -19,16 +19,13 @@ scale = Vector2(0.9999998, 0.9999998)
 shape = SubResource("CircleShape2D_n2v0e")
 
 [node name="Pawn_Thickness" type="Sprite2D" parent="." unique_id=715584651]
-self_modulate = Color(1, 0.21960784, 0, 1)
 texture = ExtResource("2_018tw")
 offset = Vector2(0, 1700)
 
 [node name="Pawn_Border" type="Sprite2D" parent="." unique_id=233541426]
-self_modulate = Color(1, 0.3019608, 0.19607843, 1)
 texture = ExtResource("4_cr4cw")
 
 [node name="Pawn_Top" type="Sprite2D" parent="." unique_id=398414720]
-self_modulate = Color(0, 0.9411765, 0.53333336, 1)
 texture = ExtResource("3_3ab40")
 
 [node name="Figurine" type="Node2D" parent="." unique_id=1971803432]

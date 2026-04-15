@@ -10,9 +10,6 @@ func _ready() -> void:
 
 func _on_move_pressed() -> void:
 	action_selected.emit("move")
-	#action_selected.emit("melee")
-	#action_selected.emit("range")
-	#get_viewport().set_input_as_handled()
 
 func _on_melee_pressed() -> void:
 	action_selected.emit("melee")
