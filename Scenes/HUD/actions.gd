@@ -1,4 +1,4 @@
-class_name Hud
+class_name ActionsHUD
 extends CanvasLayer
 
 signal action_selected(action_name: String)

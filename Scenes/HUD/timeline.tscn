@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bpcpv83y4a8dt"]
 
-[ext_resource type="Script" uid="uid://sylyuvk4r6g5" path="res://Scenes/timeline.gd" id="1_5kc13"]
+[ext_resource type="Script" uid="uid://sylyuvk4r6g5" path="res://Scenes/HUD/timeline.gd" id="1_5kc13"]
 
 [node name="Timeline" type="CanvasLayer" unique_id=1589750245]
 script = ExtResource("1_5kc13")

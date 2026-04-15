@@ -15,3 +15,4 @@ func generate_visuals(turn_order: Array) -> void:
 		
 		if pawn.data:
 			new_item.setup(pawn.data)
+			

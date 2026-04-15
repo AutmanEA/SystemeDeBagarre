@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://rstxrruovjgl"]
 
-[ext_resource type="Script" uid="uid://b78lme3jmvd1v" path="res://Scenes/pawn.gd" id="1_eu7ni"]
+[ext_resource type="Script" uid="uid://b78lme3jmvd1v" path="res://Scenes/Objects/pawn.gd" id="1_eu7ni"]
 [ext_resource type="Texture2D" uid="uid://dkl17xo57t5ap" path="res://assets/pawn_base/thickness.svg" id="2_018tw"]
 [ext_resource type="Texture2D" uid="uid://c4dpw44ow2dus" path="res://assets/pawn_base/top.svg" id="3_3ab40"]
 [ext_resource type="Texture2D" uid="uid://mfddo35hiav6" path="res://assets/pawn_base/border.svg" id="4_cr4cw"]

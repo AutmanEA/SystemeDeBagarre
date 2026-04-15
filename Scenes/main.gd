@@ -1,7 +1,7 @@
 extends Node
 
-const TILE_SCENE = preload("res://Scenes/tile.tscn")
-const PAWN_SCENE = preload("res://Scenes/pawn.tscn")
+const TILE_SCENE = preload("res://Scenes/Objects/tile.tscn")
+const PAWN_SCENE = preload("res://Scenes/Objects/pawn.tscn")
 
 var grid: Dictionary = {}
 var pawns: Dictionary = {}
@@ -9,7 +9,7 @@ var pawns: Dictionary = {}
 @onready var select_manager = $SelectManager
 @onready var action_manager = $ActionManager
 
-@onready var hud: Hud = $Hud
+@onready var hud: ActionsHUD = $ActionsHUD
 
 @export var data_wall: TileTypeData
 @export var data_floor: TileTypeData

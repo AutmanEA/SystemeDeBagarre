@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cswvi6adxk56e"]
 
-[ext_resource type="Script" uid="uid://yhopb0och1rh" path="res://Scenes/timeline_portrait.gd" id="1_tpb0a"]
+[ext_resource type="Script" uid="uid://yhopb0och1rh" path="res://Scenes/HUD/portrait.gd" id="1_tpb0a"]
 
 [node name="TimelinePortrait" type="ColorRect" unique_id=614521784]
 custom_minimum_size = Vector2(50, 50)
