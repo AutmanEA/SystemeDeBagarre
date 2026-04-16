@@ -1,7 +1,7 @@
 class_name ActionManager
 extends Node
 
-@onready var world = get_parent()
+@onready var world: World = get_parent()
 
 enum e_game_state {
 	NEUTRAL,
@@ -10,12 +10,14 @@ enum e_game_state {
 	ATTACKING_RANGE
 	}
 
+var current_pawn: Pawn
 var current_state: e_game_state = e_game_state.NEUTRAL
 var reachable_tiles: Dictionary = {}
 var targetable_tiles: Array = []
 
 func _on_hud_action_selected(action: String) -> void:
-	if world.current_pawn == null:
+	current_pawn = world.current_pawn
+	if current_pawn == null:
 		return
 	action_clear()
 	match action:
@@ -38,11 +40,16 @@ func action_clear():
 	reachable_tiles.clear()
 
 func action_preparation():
-	var start = Vector2(world.current_pawn.q, world.current_pawn.r)
+	var start = Vector2(current_pawn.q, current_pawn.r)
 	var pathfinder = PathfindingHelper.new(world.grid, world.pawns)
 	match current_state:
 		e_game_state.MOVING:
-			reachable_tiles = pathfinder.get_reachable_tiles(start, world.pawns[start].data.speed)
+			var max_movement: int
+			if world.pawns[start].data.speed < current_pawn.current_init:
+				max_movement = world.pawns[start].data.speed
+			else:
+				max_movement = current_pawn.current_init - 1
+			reachable_tiles = pathfinder.get_reachable_tiles(start, max_movement)
 			for coord in reachable_tiles.keys():
 				world.grid[coord].set_reachable(true, Color.LIGHT_BLUE)
 			
@@ -59,53 +66,72 @@ func action_preparation():
 		e_game_state.NEUTRAL:
 			pass
 
+signal action_signal(nombre: int)
 
 func action_watcher(target_coord: Vector2) -> void:
-	var cost: int = 0
+	var cost: int = get_action_cost(target_coord)
+	var allow_action = current_pawn.do_something(cost)
+	if not allow_action:
+		print("not enough init")
+		return
 	
+	print(current_pawn.data.init, "/", current_pawn.current_init)
+
 	match current_state:
 		e_game_state.MOVING:
-			cost = action_move(target_coord)
+			action_move(target_coord)
 			
 		e_game_state.ATTACKING_MELEE:
-			cost = action_melee(target_coord)
+			action_melee(target_coord)
 			
 		e_game_state.ATTACKING_RANGE:
-			cost = action_range(target_coord)
+			action_range(target_coord)
 			
 		e_game_state.NEUTRAL:
 			pass
 
-	#verifier si il a assez d'init pour faire une action avant tout ca
-	world.current_pawn.data.init -= cost
-	print(world.current_pawn.data.init)
-	
-	
 	current_state = e_game_state.NEUTRAL
+	world.turn_manager.update_turn()
 
-func action_move(target_coord: Vector2) -> int:
+func get_action_cost(target_coord: Vector2) -> int:
+	
+	# TODO : replace all const values by weapons values and other things for moving
+	match current_state:
+		e_game_state.MOVING:
+			var current_coord: Vector2 = Vector2(current_pawn.q, current_pawn.r)
+			var distance = PathfindingHelper.new(world.grid, world.pawns).get_tile_distance(current_coord.x - target_coord.x, current_coord.y - target_coord.y)
 
-	var current_coord: Vector2 = Vector2(world.current_pawn.q, world.current_pawn.r)
+			return 1 + distance
+		e_game_state.ATTACKING_MELEE:
+			return 4
+		e_game_state.ATTACKING_RANGE:
+			return 6
+		e_game_state.NEUTRAL:
+			return 0
+		_:
+			return 0
+
+func action_move(target_coord: Vector2) -> void:
+
+	var current_coord: Vector2 = Vector2(current_pawn.q, current_pawn.r)
 
 	if current_state != e_game_state.MOVING:
-		return 0
+		return
 
 	if reachable_tiles.has(target_coord):
 		
 		#var path = PathfindingHelper.reconstruct_path(target_coord, reachable_tiles)
 		world.pawns.erase(current_coord) 
-		world.pawns[target_coord] = world.current_pawn
-		world.current_pawn.set_hex_coords(int(target_coord.x), int(target_coord.y))
-		world.current_pawn.position = world.grid[target_coord].position
+		world.pawns[target_coord] = current_pawn
+		current_pawn.set_hex_coords(int(target_coord.x), int(target_coord.y))
+		current_pawn.position = world.grid[target_coord].position
 
-	var distance = PathfindingHelper.new(world.grid, world.pawns).get_tile_distance(current_coord.x - target_coord.x, current_coord.y - target_coord.y)
 	action_clear()
-	return 1 + distance #action_cost
 
-func action_melee(target_coord) -> int:
+func action_melee(target_coord) -> void:
 	
 	if current_state != e_game_state.ATTACKING_MELEE:
-		return 0
+		return
 	
 	if world.pawns.has(target_coord) and targetable_tiles.has(target_coord):
 		print("y a un méchant je le tape EN MELEE")
@@ -114,12 +140,11 @@ func action_melee(target_coord) -> int:
 		world.pawns.erase(target_coord)
 
 	action_clear()
-	return 4 #attention cout a adapter selon arme
 
-func action_range(target_coord) -> int:
+func action_range(target_coord) -> void:
 	
 	if current_state != e_game_state.ATTACKING_RANGE:
-		return 0
+		return
 		
 	if world.pawns.has(target_coord) and targetable_tiles.has(target_coord):
 		print("y a un méchant je le tape A DISTANCE")
@@ -128,4 +153,3 @@ func action_range(target_coord) -> int:
 		world.pawns.erase(target_coord)
 
 	action_clear()
-	return 3 #attention cout a adapter selon arme

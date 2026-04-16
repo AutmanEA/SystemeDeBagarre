@@ -3,6 +3,7 @@ extends Resource
 
 @export var tile_name: String = "Unknown"
 @export var is_walkable: bool = false
+@export var is_opaque: bool = true
 @export var is_pickable: bool = true
 
 @export_category("Altitude")

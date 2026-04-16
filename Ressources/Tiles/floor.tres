@@ -6,6 +6,7 @@
 script = ExtResource("1_tpr3t")
 tile_name = "floor"
 is_walkable = true
+is_opaque = false
 altitude_max = 6.0
 base_colors = Array[Color]([Color(0.95686275, 0.8352941, 0.6666667, 1), Color(0.95686275, 0.81960785, 0.6313726, 1), Color(0.9607843, 0.85490197, 0.6901961, 1)])
 thickness_darken = 0.05

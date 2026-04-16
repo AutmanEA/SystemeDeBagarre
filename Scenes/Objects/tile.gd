@@ -14,6 +14,7 @@ var r
 
 @export var type : g_enums.e_tile = g_enums.e_tile.Null
 @export var is_walkable = false
+@export var is_opaque = false
 @export var is_selected = false
 @export var is_hovered = false
 
@@ -26,7 +27,6 @@ var r
 func _ready() -> void:
 	outline.points = poly_sprite.polygon
 	_update_visuals()
-	pass # Replace with function body.
 
 
 func _process(_delta: float) -> void:
@@ -52,6 +52,7 @@ func setup_type():
 		return
 
 	self.is_walkable = data.is_walkable
+	self.is_opaque = data.is_opaque
 	self.input_pickable = data.is_pickable
 	$Tile_Sprite.z_index = data.z_order
 	

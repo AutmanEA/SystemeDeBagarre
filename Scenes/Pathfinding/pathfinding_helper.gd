@@ -30,7 +30,7 @@ func is_path_valid(distance: float, start_coord: Vector2, target_coord: Vector2,
 		
 		if path:
 			var step_coord = start.lerp(target, lerp_t).round()
-			if not grid.has(step_coord) or not grid[step_coord].is_walkable or pawns.has(step_coord):
+			if not grid.has(step_coord) or grid[step_coord].is_opaque or pawns.has(step_coord):
 				path = false
 	
 	return path
@@ -63,7 +63,7 @@ func get_field_of_view(start_coord: Vector2, range_min: int, range_max: int) -> 
 		fov.append(start_coord)
 	
 	for cell in grid:
-		if cell != start_coord and grid[cell].is_walkable and is_tile_visible(start_coord, cell):
+		if cell != start_coord and not grid[cell].is_opaque and is_tile_visible(start_coord, cell):
 			var distance = get_tile_distance(start_coord.x - cell.x, start_coord.y - cell.y)
 			if distance >= range_min and distance <= range_max:
 				fov.append(cell)

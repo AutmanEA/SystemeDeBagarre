@@ -12,6 +12,8 @@ signal pawn_clicked(pawn_instance: Pawn)
 var is_hovered: bool = false
 var is_selected: bool = false
 
+var current_init: int
+
 var q: int
 var r: int
 
@@ -21,20 +23,32 @@ func _ready() -> void:
 	input_event.connect(_on_input_event)
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
+	
+	setup()
+	
+	_update_visuals()
 
+func setup():
 	sprite_top.position.y = -sprite_offset
 	sprite_border.position.y = -sprite_offset
 	sprite_thickness.position.y = -sprite_offset
 	$BaseCollision.position.y = -sprite_offset
 	$Figurine.position.y = -sprite_offset
 	
-	#setup
 	$Pawn_Thickness.self_modulate = data.color
 	$Pawn_Border.self_modulate = data.color
 	$Pawn_Top.self_modulate = data.color
 	
+	current_init = data.init
+
+
+func do_something(cost: int) -> bool:
+	"""returns true if action is done"""
+	if cost > current_init:
+		return false
 	
-	_update_visuals()
+	current_init -= cost
+	return true
 
 func set_hex_coords(_q: int, _r: int) -> void:
 	q = _q

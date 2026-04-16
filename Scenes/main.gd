@@ -1,3 +1,4 @@
+class_name World
 extends Node
 
 const TILE_SCENE = preload("res://Scenes/Objects/tile.tscn")
@@ -35,7 +36,7 @@ const map = [
 	[0,1,2,2,2,2,2,2,2,1,2,2,2,1],
 	[1,1,2,2,2,2,2,2,2,1,2,2,1,1],
 	[1,1,2,2,2,1,1,2,2,2,2,2,1,1],
-	[1,1,2,1,2,2,2,2,2,2,2,2,1,1],
+	[1,1,2,1,2,2,0,2,2,2,2,2,1,1],
 	[1,1,2,2,2,2,2,2,2,2,2,2,1,1],
 	[1,1,2,2,2,2,2,2,2,2,2,2,1,1],
 	[0,0,1,1,1,1,1,1,1,1,1,1,1,0],
@@ -50,7 +51,7 @@ func _ready() -> void:
 	
 	
 	#remplacer par un truc qui find le premier avec le plus grand init pour le current pawn
-	current_pawn = pawns[Vector2(4, 5)]
+	#current_pawn = pawns[Vector2(4, 5)]
 	
 	var all_pawns = []
 	for p in pawns:
@@ -60,6 +61,7 @@ func _ready() -> void:
 	#quand un tour est fini ca doit changer le current pawn
 	
 	hud.action_selected.connect(action_manager._on_hud_action_selected)
+
 
 func _process(_delta: float) -> void:
 	pass
