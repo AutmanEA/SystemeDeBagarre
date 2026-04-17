@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_tpr3t")
+type = 2
 tile_name = "floor"
 is_walkable = true
 is_opaque = false

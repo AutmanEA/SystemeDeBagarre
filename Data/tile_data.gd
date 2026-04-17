@@ -1,6 +1,8 @@
 class_name TileTypeData
 extends Resource
 
+@export var type: g_enums.e_tile = g_enums.e_tile.Null
+
 @export var tile_name: String = "Unknown"
 @export var is_walkable: bool = false
 @export var is_opaque: bool = true

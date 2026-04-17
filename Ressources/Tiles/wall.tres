@@ -4,6 +4,7 @@
 
 [resource]
 script = ExtResource("1_tua7w")
+type = 1
 tile_name = "wall"
 is_pickable = false
 altitude_min = 70.0

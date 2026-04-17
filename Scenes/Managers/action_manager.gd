@@ -31,17 +31,17 @@ func _on_hud_action_selected(action: String) -> void:
 
 func action_clear():
 	for c in reachable_tiles.keys():
-		world.grid[c].set_reachable(false)
+		world.map_manager.grid[c].set_reachable(false)
 		
 	for c in targetable_tiles:
-		world.grid[c].set_targetable(false)
+		world.map_manager.grid[c].set_targetable(false)
 		
 	targetable_tiles.clear()
 	reachable_tiles.clear()
 
 func action_preparation():
 	var start = Vector2(current_pawn.q, current_pawn.r)
-	var pathfinder = PathfindingHelper.new(world.grid, world.pawns)
+	var pathfinder = PathfindingHelper.new(world.map_manager.grid, world.pawns)
 	match current_state:
 		e_game_state.MOVING:
 			var max_movement: int
@@ -51,22 +51,21 @@ func action_preparation():
 				max_movement = current_pawn.current_init - 1
 			reachable_tiles = pathfinder.get_reachable_tiles(start, max_movement)
 			for coord in reachable_tiles.keys():
-				world.grid[coord].set_reachable(true, Color.LIGHT_BLUE)
+				world.map_manager.grid[coord].set_reachable(true, Color.LIGHT_BLUE)
 			
 		e_game_state.ATTACKING_MELEE:
 			targetable_tiles = pathfinder.get_field_of_view(start, 1, 1)
 			for coord in targetable_tiles:
-				world.grid[coord].set_targetable(true, Color.YELLOW)
+				world.map_manager.grid[coord].set_targetable(true, Color.YELLOW)
 			
 		e_game_state.ATTACKING_RANGE:
 			targetable_tiles = pathfinder.get_field_of_view(start, world.pawns[start].data.tmp_min_range, world.pawns[start].data.tmp_max_range)
 			for coord in targetable_tiles:
-				world.grid[coord].set_targetable(true, Color.YELLOW)
+				world.map_manager.grid[coord].set_targetable(true, Color.YELLOW)
 			
 		e_game_state.NEUTRAL:
 			pass
 
-signal action_signal(nombre: int)
 
 func action_watcher(target_coord: Vector2) -> void:
 	var cost: int = get_action_cost(target_coord)
@@ -99,7 +98,7 @@ func get_action_cost(target_coord: Vector2) -> int:
 	match current_state:
 		e_game_state.MOVING:
 			var current_coord: Vector2 = Vector2(current_pawn.q, current_pawn.r)
-			var distance = PathfindingHelper.new(world.grid, world.pawns).get_tile_distance(current_coord.x - target_coord.x, current_coord.y - target_coord.y)
+			var distance = PathfindingHelper.new(world.map_manager.grid, world.pawns).get_tile_distance(current_coord.x - target_coord.x, current_coord.y - target_coord.y)
 
 			return 1 + distance
 		e_game_state.ATTACKING_MELEE:
@@ -124,7 +123,7 @@ func action_move(target_coord: Vector2) -> void:
 		world.pawns.erase(current_coord) 
 		world.pawns[target_coord] = current_pawn
 		current_pawn.set_hex_coords(int(target_coord.x), int(target_coord.y))
-		current_pawn.position = world.grid[target_coord].position
+		current_pawn.position = world.map_manager.grid[target_coord].position
 
 	action_clear()
 

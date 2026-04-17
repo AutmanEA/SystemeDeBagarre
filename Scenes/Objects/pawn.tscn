@@ -11,7 +11,7 @@ radius = 1700.0
 
 [node name="Pawn" type="Area2D" unique_id=1734967744]
 texture_filter = 5
-scale = Vector2(0.025, 0.013)
+scale = Vector2(0.013, 0.007)
 script = ExtResource("1_eu7ni")
 
 [node name="BaseCollision" type="CollisionShape2D" parent="." unique_id=802784282]

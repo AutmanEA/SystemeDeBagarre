@@ -9,8 +9,8 @@ var selected_pawn: Pawn = null
 func handle_selection(target_coord: Vector2) -> void:
 	clear_selection(selected_tile)
 	clear_selection(selected_pawn)
-	if world.grid.has(target_coord):
-		selected_tile = world.grid[target_coord]
+	if world.map_manager.grid.has(target_coord):
+		selected_tile = world.map_manager.grid[target_coord]
 		selected_tile.set_selected(true)
 
 	if world.pawns.has(target_coord):

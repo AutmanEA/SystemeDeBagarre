@@ -6,8 +6,8 @@ signal tile_hovered(tile_instance)
 
 @export var data: TileTypeData
 
-const hex_width = 128.0
-const hex_height = 128.0
+const hex_width = 64.0
+const hex_height = 64.0
 
 var q
 var r
@@ -37,7 +37,7 @@ func setup(_q : int, _r : int):
 	self.q = _q
 	self.r = _r
 	
-	self.scale = Vector2(1.0, 0.5)
+	self.scale = Vector2(0.5, 0.25)
 	self.position = hex_to_pixel_position()
 	self.input_pickable = true
 	

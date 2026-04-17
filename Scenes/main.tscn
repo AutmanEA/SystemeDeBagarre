@@ -1,11 +1,9 @@
 [gd_scene format=3 uid="uid://dtw0ciw2w1sg3"]
 
 [ext_resource type="Script" uid="uid://ctxdfdw8wba76" path="res://Scenes/main.gd" id="1_6iyac"]
-[ext_resource type="Resource" uid="uid://btypv0o1bb3a7" path="res://Ressources/Tiles/wall.tres" id="2_fdnlq"]
-[ext_resource type="Resource" uid="uid://seswfdm85xve" path="res://Ressources/Tiles/floor.tres" id="3_jkdf5"]
 [ext_resource type="Resource" uid="uid://cpgg3bisfjuvl" path="res://Ressources/Pawns/good.tres" id="4_wsu2k"]
 [ext_resource type="Resource" uid="uid://fvfue5ekjdx1" path="res://Ressources/Pawns/evil.tres" id="5_k12tt"]
-[ext_resource type="PackedScene" uid="uid://cl61ssncd228g" path="res://Scenes/Objects/tile.tscn" id="6_h1bgf"]
+[ext_resource type="PackedScene" uid="uid://bttdlifb1544" path="res://Scenes/Map/map.tscn" id="6_fdnlq"]
 [ext_resource type="PackedScene" uid="uid://rstxrruovjgl" path="res://Scenes/Objects/pawn.tscn" id="7_b3802"]
 [ext_resource type="PackedScene" uid="uid://1q8j7o38k1rv" path="res://Scenes/HUD/actions.tscn" id="8_fevyy"]
 [ext_resource type="PackedScene" uid="uid://bpcpv83y4a8dt" path="res://Scenes/HUD/timeline.tscn" id="9_hibaj"]
@@ -17,12 +15,13 @@
 [node name="World" type="Node2D" unique_id=1988099869]
 y_sort_enabled = true
 script = ExtResource("1_6iyac")
-data_wall = ExtResource("2_fdnlq")
-data_floor = ExtResource("3_jkdf5")
 data_ally = ExtResource("4_wsu2k")
 data_enemy = ExtResource("5_k12tt")
 
+[node name="Map" parent="." unique_id=100330892 instance=ExtResource("6_fdnlq")]
+
 [node name="ColorRect" type="ColorRect" parent="." unique_id=374584855]
+visible = false
 offset_left = -109.0
 offset_top = -122.0
 offset_right = 1206.0
@@ -31,16 +30,13 @@ mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=399771809]
-anchor_mode = 0
-limit_left = 167
-limit_top = 25
-limit_right = 1045
-limit_bottom = 543
+limit_enabled = false
+limit_left = 0
+limit_top = 0
+limit_right = 936
+limit_bottom = 575
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
-
-[node name="Tile" parent="." unique_id=595987141 instance=ExtResource("6_h1bgf")]
-visible = false
 
 [node name="Pawn" parent="." unique_id=1734967744 instance=ExtResource("7_b3802")]
 visible = false
@@ -62,5 +58,4 @@ script = ExtResource("11_ee4r6")
 script = ExtResource("12_gt3je")
 timeline_ui = NodePath("../TimelineHUD")
 
-[connection signal="tile_clicked" from="Tile" to="." method="_on_tile_clicked"]
 [connection signal="pawn_clicked" from="Pawn" to="." method="_on_pawn_clicked"]
