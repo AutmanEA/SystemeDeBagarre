@@ -21,6 +21,7 @@ func _ready() -> void:
 		if tile_res:
 			tile_data_map[tile_res.type] = tile_res
 
+
 func generate() -> void:
 	# TODO random map generator
 	const map = [
@@ -52,7 +53,6 @@ func generate() -> void:
 			new_tile.setup(q, r)
 			
 			new_tile.tile_clicked.connect(_on_tile_clicked)
-			new_tile.tile_hovered.connect(_on_tile_hovered)
 			
 			var coord = Vector2(q, r)
 			grid[coord] = new_tile
@@ -72,6 +72,13 @@ func get_tile(target_coord: Vector2) -> Tile:
 	if grid.has(target_coord):
 		return grid[target_coord]
 	return null
+
+
+func is_spawnable(target_coord: Vector2) -> bool:
+	var tile = get_tile(target_coord)
+	if tile and tile.is_walkable:
+		return true
+	return false
 
 
 func get_map_center() -> Vector2:

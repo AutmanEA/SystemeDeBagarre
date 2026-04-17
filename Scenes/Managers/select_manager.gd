@@ -13,7 +13,7 @@ func handle_selection(target_coord: Vector2) -> void:
 		selected_tile = world.map_manager.grid[target_coord]
 		selected_tile.set_selected(true)
 
-	if world.pawns.has(target_coord):
+	if world.pawn_manager.pawns.has(target_coord):
 		selected_pawn = world.pawns[target_coord]
 		selected_pawn.set_selected(true)
 

@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://ctxdfdw8wba76" path="res://Scenes/main.gd" id="1_6iyac"]
 [ext_resource type="Resource" uid="uid://cpgg3bisfjuvl" path="res://Ressources/Pawns/good.tres" id="4_wsu2k"]
+[ext_resource type="PackedScene" uid="uid://d1eet1l6u25rs" path="res://Scenes/Objects/pawn_manager.tscn" id="5_d1ilt"]
 [ext_resource type="Resource" uid="uid://fvfue5ekjdx1" path="res://Ressources/Pawns/evil.tres" id="5_k12tt"]
 [ext_resource type="PackedScene" uid="uid://bttdlifb1544" path="res://Scenes/Map/map.tscn" id="6_fdnlq"]
-[ext_resource type="PackedScene" uid="uid://rstxrruovjgl" path="res://Scenes/Objects/pawn.tscn" id="7_b3802"]
 [ext_resource type="PackedScene" uid="uid://1q8j7o38k1rv" path="res://Scenes/HUD/actions.tscn" id="8_fevyy"]
 [ext_resource type="PackedScene" uid="uid://bpcpv83y4a8dt" path="res://Scenes/HUD/timeline.tscn" id="9_hibaj"]
 [ext_resource type="PackedScene" uid="uid://cswvi6adxk56e" path="res://Scenes/HUD/portrait.tscn" id="10_fdnlq"]
@@ -19,6 +19,8 @@ data_ally = ExtResource("4_wsu2k")
 data_enemy = ExtResource("5_k12tt")
 
 [node name="Map" parent="." unique_id=100330892 instance=ExtResource("6_fdnlq")]
+
+[node name="PawnManager" parent="." unique_id=823705961 instance=ExtResource("5_d1ilt")]
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=374584855]
 visible = false
@@ -38,11 +40,6 @@ limit_bottom = 575
 drag_horizontal_enabled = true
 drag_vertical_enabled = true
 
-[node name="Pawn" parent="." unique_id=1734967744 instance=ExtResource("7_b3802")]
-visible = false
-position = Vector2(88, 76)
-data = ExtResource("5_k12tt")
-
 [node name="ActionsHUD" parent="." unique_id=1206000801 instance=ExtResource("8_fevyy")]
 
 [node name="TimelineHUD" parent="." unique_id=1589750245 instance=ExtResource("9_hibaj")]
@@ -57,5 +54,3 @@ script = ExtResource("11_ee4r6")
 [node name="TurnManager" type="Node" parent="." unique_id=1018587200 node_paths=PackedStringArray("timeline_ui")]
 script = ExtResource("12_gt3je")
 timeline_ui = NodePath("../TimelineHUD")
-
-[connection signal="pawn_clicked" from="Pawn" to="." method="_on_pawn_clicked"]

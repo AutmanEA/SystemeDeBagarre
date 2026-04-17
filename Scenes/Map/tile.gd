@@ -2,7 +2,6 @@ class_name Tile
 extends Area2D
 
 signal tile_clicked(tile_instance)
-signal tile_hovered(tile_instance)
 
 @export var data: TileTypeData
 
@@ -24,13 +23,10 @@ var r
 @onready var outline: Line2D = $Tile_Outline
 @onready var poly_sprite: Polygon2D = $Tile_Sprite
 
+
 func _ready() -> void:
 	outline.points = poly_sprite.polygon
 	_update_visuals()
-
-
-func _process(_delta: float) -> void:
-	pass
 
 
 func setup(_q : int, _r : int):
@@ -39,7 +35,6 @@ func setup(_q : int, _r : int):
 	
 	self.scale = Vector2(0.5, 0.25)
 	self.position = hex_to_pixel_position()
-	self.input_pickable = true
 	
 	setup_type()
 	
@@ -75,9 +70,9 @@ func setup_type():
 	$Tile_Thickness.polygon[1].y -= altitude
 	$Tile_Thickness.polygon[2].y -= altitude
 
+
 func _update_visuals() -> void:
 	if is_selected:
-		# poly_sprite.self_modulate = Color.DIM_GRAY -> VISUEL A METTRE A JOUR ?
 		outline.width = 3.0
 		outline.position.y = poly_sprite.position.y - 1
 	elif is_hovered and input_pickable:
@@ -98,42 +93,46 @@ func hex_to_pixel_position() -> Vector2:
 	
 	return tile_position
 
+
 func _get_varied_color(base_color: Color) -> Color:
 	var color_r = base_color.r + randf_range(-color_variation, color_variation)
 	var color_g = base_color.g + randf_range(-color_variation, color_variation)
 	var color_b = base_color.b + randf_range(-color_variation, color_variation)
 	return Color(color_r, color_g, color_b).clamp()
 
+
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		# TODO: lancer une fonction qui permet d'afficher les infos qqpart dans le HUD,
-		# uniquement si y a des choses dedans je suppose, genre un effet particulier...,
-		# ou alors tout le temps et ça donne la range par rapport au personnage en cours
-		print_own_info() # temporaire
+		print_own_info()
 		tile_clicked.emit(self)
+
 
 func print_own_info():
 	print("Tile position -> ", self.q, " ", self.r)
 	print("Tile type -> ", self.data.tile_name)
 
+
 func _on_mouse_entered() -> void:
 	is_hovered = true
 	_update_visuals()
-	tile_hovered.emit(self)
+
 
 func _on_mouse_exited() -> void:
 	is_hovered = false
 	_update_visuals()
 
+
 func set_selected(selected: bool) -> void:
 	is_selected = selected
 	_update_visuals()
+
 
 func set_reachable(reachable: bool, color: Color = Color.WHITE) -> void:
 	if reachable:
 		self.modulate = color
 	else:
 		self.modulate = Color.WHITE
+
 
 func set_targetable(targetable: bool, color: Color = Color.WHITE) -> void:
 	if targetable:

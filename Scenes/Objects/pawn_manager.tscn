@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://d1eet1l6u25rs"]
+
+[ext_resource type="Script" uid="uid://clnlgkfmpydqt" path="res://Scenes/Objects/pawn_manager.gd" id="1_lsol6"]
+
+[node name="PawnManager" type="Node2D" unique_id=823705961]
+script = ExtResource("1_lsol6")
