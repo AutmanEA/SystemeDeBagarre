@@ -1,6 +1,15 @@
 [gd_scene format=3 uid="uid://d1eet1l6u25rs"]
 
 [ext_resource type="Script" uid="uid://clnlgkfmpydqt" path="res://Scenes/Objects/pawn_manager.gd" id="1_lsol6"]
+[ext_resource type="Resource" uid="uid://cpgg3bisfjuvl" path="res://Ressources/Pawns/good.tres" id="2_ololf"]
+[ext_resource type="Resource" uid="uid://fvfue5ekjdx1" path="res://Ressources/Pawns/evil.tres" id="3_3ru2n"]
+[ext_resource type="PackedScene" uid="uid://bpcpv83y4a8dt" path="res://Scenes/HUD/timeline.tscn" id="4_uuji5"]
+[ext_resource type="PackedScene" uid="uid://cswvi6adxk56e" path="res://Scenes/HUD/portrait.tscn" id="5_x7qe3"]
 
 [node name="PawnManager" type="Node2D" unique_id=823705961]
 script = ExtResource("1_lsol6")
+data_ally = ExtResource("2_ololf")
+data_enemy = ExtResource("3_3ru2n")
+
+[node name="TimelineHUD" parent="." unique_id=1589750245 instance=ExtResource("4_uuji5")]
+item_scene = ExtResource("5_x7qe3")

@@ -10,24 +10,10 @@ enum e_game_state {
 	ATTACKING_RANGE
 	}
 
-var current_pawn: Pawn
 var current_state: e_game_state = e_game_state.NEUTRAL
 var reachable_tiles: Dictionary = {}
 var targetable_tiles: Array = []
 
-func _on_hud_action_selected(action: String) -> void:
-	current_pawn = world.current_pawn
-	if current_pawn == null:
-		return
-	action_clear()
-	match action:
-		"move":
-			current_state = e_game_state.MOVING
-		"melee":
-			current_state = e_game_state.ATTACKING_MELEE
-		"range":
-			current_state = e_game_state.ATTACKING_RANGE
-	action_preparation()
 
 func action_clear():
 	for c in reachable_tiles.keys():
@@ -39,8 +25,8 @@ func action_clear():
 	targetable_tiles.clear()
 	reachable_tiles.clear()
 
-func action_preparation():
-	var start = Vector2(current_pawn.q, current_pawn.r)
+func action_preparation(current_pawn):
+	var start = current_pawn.coord
 	var pathfinder = PathfindingHelper.new(world.map_manager.grid, world.pawn_manager.pawns)
 	match current_state:
 		e_game_state.MOVING:
@@ -67,8 +53,8 @@ func action_preparation():
 			pass
 
 
-func action_watcher(target_coord: Vector2) -> void:
-	var cost: int = get_action_cost(target_coord)
+func action_watcher(target_coord: Vector2, current_pawn) -> void:
+	var cost: int = get_action_cost(target_coord, current_pawn)
 	var allow_action = current_pawn.do_something(cost)
 	if not allow_action:
 		print("not enough init")
@@ -78,7 +64,7 @@ func action_watcher(target_coord: Vector2) -> void:
 
 	match current_state:
 		e_game_state.MOVING:
-			action_move(target_coord)
+			action_move(target_coord, current_pawn)
 			
 		e_game_state.ATTACKING_MELEE:
 			action_melee(target_coord)
@@ -92,12 +78,12 @@ func action_watcher(target_coord: Vector2) -> void:
 	current_state = e_game_state.NEUTRAL
 	world.turn_manager.update_turn()
 
-func get_action_cost(target_coord: Vector2) -> int:
+func get_action_cost(target_coord: Vector2, current_pawn) -> int:
 	
 	# TODO : replace all const values by weapons values and other things for moving
 	match current_state:
 		e_game_state.MOVING:
-			var current_coord: Vector2 = Vector2(current_pawn.q, current_pawn.r)
+			var current_coord: Vector2 = current_pawn.coord
 			var distance = PathfindingHelper.new(world.map_manager.grid, world.pawn_manager.pawns).get_tile_distance(current_coord.x - target_coord.x, current_coord.y - target_coord.y)
 
 			return 1 + distance
@@ -110,10 +96,9 @@ func get_action_cost(target_coord: Vector2) -> int:
 		_:
 			return 0
 
-func action_move(target_coord: Vector2) -> void:
+func action_move(target_coord: Vector2, current_pawn) -> void:
 
-	var current_coord: Vector2 = Vector2(current_pawn.q, current_pawn.r)
-
+	var current_coord: Vector2 = current_pawn.coord
 	if current_state != e_game_state.MOVING:
 		return
 
@@ -122,7 +107,7 @@ func action_move(target_coord: Vector2) -> void:
 		#var path = PathfindingHelper.reconstruct_path(target_coord, reachable_tiles)
 		world.pawn_manager.pawns.erase(current_coord) 
 		world.pawn_manager.pawns[target_coord] = current_pawn
-		current_pawn.set_hex_coords(int(target_coord.x), int(target_coord.y))
+		current_pawn.coord = target_coord
 		current_pawn.position = world.map_manager.grid[target_coord].position
 
 	action_clear()

@@ -14,10 +14,10 @@ var is_selected: bool = false
 
 var current_init: int
 
-var q: int
-var r: int
+var coord: Vector2
 
 @export var data: PawnTypeData
+
 
 func _ready() -> void:
 	input_event.connect(_on_input_event)
@@ -27,6 +27,7 @@ func _ready() -> void:
 	setup()
 	
 	_update_visuals()
+
 
 func setup():
 	sprite_top.position.y = -sprite_offset
@@ -50,26 +51,31 @@ func do_something(cost: int) -> bool:
 	current_init -= cost
 	return true
 
-func set_hex_coords(_q: int, _r: int) -> void:
-	q = _q
-	r = _r
+
+func set_coords(c: Vector2) -> void:
+	coord = c
+
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		pawn_clicked.emit(self)
 		get_viewport().set_input_as_handled()
 
+
 func _on_mouse_entered() -> void:
 	is_hovered = true
 	_update_visuals()
+
 
 func _on_mouse_exited() -> void:
 	is_hovered = false
 	_update_visuals()
 
+
 func set_selected(selected: bool) -> void:
 	is_selected = selected
 	_update_visuals()
+
 
 func _update_visuals() -> void:
 	if is_selected:
