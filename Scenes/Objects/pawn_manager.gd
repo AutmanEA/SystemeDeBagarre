@@ -97,7 +97,8 @@ func update_turn_order() -> void:
 	timeline.generate_visuals(turn_order)
 
 
-func move_pawn(pawn: Pawn, new_coord: Vector2) -> void:
+func move_pawn(pawn: Pawn, new_coord: Vector2, new_position: Vector2) -> void:
 	pawns.erase(pawn.coord)
 	pawn.coord = new_coord
+	pawn.global_position = new_position
 	pawns[new_coord] = pawn

@@ -124,7 +124,7 @@ func action_preparation():
 	map_manager.light_up_tiles(tiles_to_light, light_color)
 
 
-func action_watcher(target_coord: Vector2, current_pawn) -> void:
+func action_watcher(target_coord: Vector2, current_pawn: Pawn) -> void:
 	var cost: int = get_action_cost(target_coord, current_pawn)
 	var allow_action = current_pawn.do_something(cost)
 	if not allow_action:
@@ -135,6 +135,7 @@ func action_watcher(target_coord: Vector2, current_pawn) -> void:
 
 	match current_state:
 		e_game_state.MOVING:
+			print("ATTENTION JE VAIS BOUGER")
 			action_move(target_coord, current_pawn)
 			
 		e_game_state.ATTACKING_MELEE:
@@ -149,14 +150,15 @@ func action_watcher(target_coord: Vector2, current_pawn) -> void:
 	current_state = e_game_state.NEUTRAL
 	pawn_manager.update_turn_order()
 
-func get_action_cost(target_coord: Vector2, current_pawn) -> int:
+func get_action_cost(target_coord: Vector2, current_pawn: Pawn) -> int:
 	
 	# TODO : replace all const values by weapons values and other things for moving
 	match current_state:
 		e_game_state.MOVING:
 			var current_coord: Vector2 = current_pawn.coord
-			var distance = PathfindingHelper.new(map_manager.grid, pawn_manager.pawns).get_tile_distance(current_coord.x - target_coord.x, current_coord.y - target_coord.y)
+			var distance = Math.get_distance(current_coord, target_coord)
 
+			print("ca va me couter de l'init mais...")
 			return 1 + distance
 		e_game_state.ATTACKING_MELEE:
 			return 4
@@ -167,19 +169,16 @@ func get_action_cost(target_coord: Vector2, current_pawn) -> int:
 		_:
 			return 0
 
-func action_move(target_coord: Vector2, current_pawn) -> void:
-
-	var current_coord: Vector2 = current_pawn.coord
+func action_move(target_coord: Vector2, current_pawn: Pawn) -> void:
 	if current_state != e_game_state.MOVING:
 		return
-
-	if reachable_tiles.has(target_coord):
 		
-		#var path = PathfindingHelper.reconstruct_path(target_coord, reachable_tiles)
-		pawn_manager.pawns.erase(current_coord) 
-		pawn_manager.pawns[target_coord] = current_pawn
-		current_pawn.coord = target_coord
-		current_pawn.position = map_manager.grid[target_coord].position
+	var pawns_positions = pawn_manager.pawns.keys()
+	var movement = pawn_manager.current_pawn.get_current_max_movement()
+	var reachables = map_manager.get_reachable_tiles(current_pawn.coord, movement, pawns_positions)
+	if reachables.has(target_coord):
+		print("VOILA JE BOUUUUGE")
+		pawn_manager.move_pawn(current_pawn, target_coord, map_manager.grid[target_coord].global_position)
 
 	action_clear()
 

@@ -167,6 +167,7 @@ func is_path_valid(distance: float, start_coord: Vector2, target_coord: Vector2,
 	
 	return path
 
+
 func is_tile_visible(start_coord: Vector2, target_coord: Vector2, coords_to_avoid: Array) -> bool:
 	
 	if (not grid.has(start_coord)) or (not grid.has(target_coord)):
