@@ -8,6 +8,7 @@ pawn_name = "Enny L'ennemi"
 tmp_min_range = 5
 tmp_max_range = 7
 init = 16
+is_controlable = false
 speed = 1
 color = Color(0.62352943, 0.42745098, 1, 1)
 metadata/_custom_type_script = "uid://c8bks0j6ww3py"

@@ -13,6 +13,7 @@ var is_hovered: bool = false
 var is_selected: bool = false
 
 var current_init: int
+var current_max_movement: int
 
 var coord: Vector2
 
@@ -50,6 +51,15 @@ func do_something(cost: int) -> bool:
 	
 	current_init -= cost
 	return true
+
+
+func get_current_max_movement() -> int:
+	var max_movement: int
+	if self.data.speed < self.current_init:
+		max_movement = self.data.speed
+	else:
+		max_movement = self.current_init - 1
+	return max_movement
 
 
 func set_coords(c: Vector2) -> void:

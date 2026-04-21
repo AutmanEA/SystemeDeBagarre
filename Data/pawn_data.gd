@@ -16,6 +16,8 @@ extends Resource
 
 @export var init: int = 20
 
+@export var is_controlable: bool = true
+
 #speed = movement range
 @export var speed: int = 3
 

@@ -5,7 +5,6 @@
 [ext_resource type="PackedScene" uid="uid://bttdlifb1544" path="res://Scenes/Map/map.tscn" id="6_fdnlq"]
 [ext_resource type="PackedScene" uid="uid://1q8j7o38k1rv" path="res://Scenes/HUD/actions.tscn" id="8_fevyy"]
 [ext_resource type="Script" uid="uid://clwm6rvc243ff" path="res://Scenes/Managers/select_manager.gd" id="10_pdsj5"]
-[ext_resource type="Script" uid="uid://b8x5ylq5fjqj3" path="res://Scenes/Managers/action_manager.gd" id="11_ee4r6"]
 
 [node name="World" type="Node2D" unique_id=1988099869]
 y_sort_enabled = true
@@ -28,6 +27,3 @@ drag_vertical_enabled = true
 
 [node name="SelectManager" type="Node" parent="." unique_id=555990247]
 script = ExtResource("10_pdsj5")
-
-[node name="ActionManager" type="Node" parent="." unique_id=545366920]
-script = ExtResource("11_ee4r6")

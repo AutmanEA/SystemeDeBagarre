@@ -5,6 +5,10 @@ signal grid_tile_clicked(coord: Vector2)
 signal grid_tile_hovered(coord: Vector2)
 
 const TILE_SCENE = preload("res://Scenes/Map/tile.tscn")
+const HEX_DIRECTIONS = [
+	Vector2(1, 0), Vector2(1, -1), Vector2(0, -1), 
+	Vector2(-1, 0), Vector2(-1, 1), Vector2(0, 1)
+]
 
 # loads tiles objects
 @onready var tiles: Node2D = $Tiles
@@ -68,7 +72,7 @@ func generate_start_position(pawn_number: int) -> Array[Vector2]:
 		if tile and tile.is_walkable:
 			position_array.append(coord)
 			pawn_number -= 1
-		if pawn_number == 0:
+		if pawn_number <= 0:
 			break
 	
 	return position_array
@@ -106,3 +110,94 @@ func get_map_center() -> Vector2:
 		max_pos.y = max(max_pos.y, pos.y)
 		
 	return (min_pos + max_pos) / 2.0
+
+
+func light_up_tiles(reachables: Array, color: Color) -> void:
+	for coord in reachables:
+		grid[coord].set_reachable(true, color)
+
+
+func clear_lights() -> void:
+	for tile in grid.values():
+		tile.set_reachable(false)
+
+
+func get_reachable_tiles(start_coord: Vector2, distance: int, coords_to_avoid: Array) -> Dictionary:
+	var came_from = {}
+
+	if not grid.has(start_coord): 
+		return came_from
+		
+	came_from[start_coord] = null
+	var fringes = [[grid[start_coord]]]
+
+	for k in range(1, distance + 1):
+		fringes.append([])
+		for hex in fringes[k - 1]:
+			var hex_coord = Vector2(hex.q, hex.r)
+
+			for dir in HEX_DIRECTIONS:
+				var neighbor_coord = hex_coord + dir
+				if grid.has(neighbor_coord):
+					var neighbor = grid[neighbor_coord]
+
+					if not came_from.has(neighbor_coord) and neighbor.is_walkable and not coords_to_avoid.has(neighbor_coord):
+						came_from[neighbor_coord] = hex_coord
+						fringes[k].append(neighbor)
+
+	return came_from
+
+
+func is_path_valid(distance: float, start_coord: Vector2, target_coord: Vector2, epsilon: Vector2, coords_to_avoid: Array) -> bool:
+	if distance == 0:
+		return true
+	
+	var start = start_coord + epsilon
+	var target = target_coord + epsilon
+	
+	var path = true
+	
+	for i in range(1, distance):
+		var lerp_t = float(i) / distance
+		
+		if path:
+			var step_coord = start.lerp(target, lerp_t).round()
+			if not grid.has(step_coord) or grid[step_coord].is_opaque or coords_to_avoid.has(step_coord):
+				path = false
+	
+	return path
+
+func is_tile_visible(start_coord: Vector2, target_coord: Vector2, coords_to_avoid: Array) -> bool:
+	
+	if (not grid.has(start_coord)) or (not grid.has(target_coord)):
+		return false
+	
+	var distance = Math.get_distance(start_coord, target_coord)
+	if distance == 0:
+		return true
+	
+	var p_path = is_path_valid(distance, start_coord, target_coord, Vector2(1e-6, 1e-6), coords_to_avoid)
+	var n_path = is_path_valid(distance, start_coord, target_coord, Vector2(-1e-6, -1e-6), coords_to_avoid)
+	
+	if not p_path and not n_path:
+		return false
+
+	return true
+
+
+func get_field_of_view(start_coord: Vector2, range_min: int, range_max: int, coords_to_avoid: Array) -> Array:
+	var fov = []
+	
+	if not grid.has(start_coord):
+		return fov
+		
+	if range_min == 0:
+		fov.append(start_coord)
+	
+	for cell in grid:
+		if cell != start_coord and not grid[cell].is_opaque and is_tile_visible(start_coord, cell, coords_to_avoid):
+			var distance = Math.get_distance(start_coord, cell)
+			if distance >= range_min and distance <= range_max:
+				fov.append(cell)
+
+	return fov
