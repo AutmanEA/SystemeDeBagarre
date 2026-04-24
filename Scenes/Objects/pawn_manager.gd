@@ -84,6 +84,12 @@ func spawn_pawns(positions: Array[Vector2], global_positions: Array[Vector2]) ->
 		pos_index += 1
 
 
+func kill_pawn(pawn_coord: Vector2) -> void:
+	var pawn = pawns[pawn_coord]
+	pawn.queue_free()
+	pawns.erase(pawn_coord)
+
+
 func get_pawn_at(coord: Vector2) -> Pawn:
 	if pawns.has(coord):
 		return pawns[coord]

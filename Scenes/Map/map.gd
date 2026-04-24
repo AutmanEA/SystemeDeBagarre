@@ -20,6 +20,8 @@ var tile_data_map: Dictionary = {}
 # main map feature, grid[Vector2] = Tile object
 var grid: Dictionary = {}
 
+# map get reachables
+var reachables: Array = []
 
 func _ready() -> void:
 	tile_data_map[0] = null
@@ -112,7 +114,7 @@ func get_map_center() -> Vector2:
 	return (min_pos + max_pos) / 2.0
 
 
-func light_up_tiles(reachables: Array, color: Color) -> void:
+func light_up_tiles(color: Color) -> void:
 	for coord in reachables:
 		grid[coord].set_reachable(true, color)
 
@@ -120,6 +122,20 @@ func light_up_tiles(reachables: Array, color: Color) -> void:
 func clear_lights() -> void:
 	for tile in grid.values():
 		tile.set_reachable(false)
+
+
+func map_clear() -> void:
+	clear_lights()
+	reachables.clear()
+
+
+func set_reachable_tiles(start_coord: Vector2, distance: int, coords_to_avoid: Array) -> void:
+	var reachable_tiles = get_reachable_tiles(start_coord, distance, coords_to_avoid)
+	reachables = reachable_tiles.keys()
+
+
+func set_field_of_view(start_coord: Vector2, range_min: int, range_max: int, coords_to_avoid: Array) -> void:
+	reachables = get_field_of_view(start_coord, range_min, range_max, coords_to_avoid)
 
 
 func get_reachable_tiles(start_coord: Vector2, distance: int, coords_to_avoid: Array) -> Dictionary:

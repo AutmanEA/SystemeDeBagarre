@@ -1,8 +1,6 @@
 class_name World
 extends Node
 
-@onready var select_manager = $SelectManager
-
 @onready var map_manager: Map = $Map
 @onready var pawn_manager: PawnManager = $PawnManager
 
@@ -55,20 +53,20 @@ func _on_tile_clicked(clicked_object) -> void:
 	if current_state != e_game_state.NEUTRAL:
 		action_watcher(Vector2(clicked_object.x, clicked_object.y), pawn_manager.current_pawn)
 	else:
-		select_manager.handle_selection(Vector2(clicked_object.x, clicked_object.y))
+		handle_selection(Vector2(clicked_object.x, clicked_object.y))
 
 
 func _on_object_clicked(clicked_object) -> void:
 	if current_state != e_game_state.NEUTRAL:
 		action_watcher(Vector2(clicked_object.q, clicked_object.r), pawn_manager.current_pawn)
 	else:
-		select_manager.handle_selection(Vector2(clicked_object.q, clicked_object.r))
+		handle_selection(Vector2(clicked_object.q, clicked_object.r))
 
 
 func _on_hud_action_selected(action: String) -> void:
 	if pawn_manager.current_pawn == null:
 		return
-	action_clear()
+	map_manager.map_clear()
 	match action:
 		"move":
 			current_state = e_game_state.MOVING
@@ -80,48 +78,55 @@ func _on_hud_action_selected(action: String) -> void:
 
 
 
+func handle_selection(target_coord: Vector2) -> void:
+	clear_selection(selected_tile)
+	clear_selection(selected_pawn)
+	if map_manager.grid.has(target_coord):
+		selected_tile = map_manager.grid[target_coord]
+		selected_tile.set_selected(true)
+
+	if pawn_manager.pawns.has(target_coord):
+		selected_pawn = pawn_manager.pawns[target_coord]
+		selected_pawn.set_selected(true)
 
 
-var reachable_tiles: Dictionary = {}
-var targetable_tiles: Array = []
+func clear_selection(selected_object) -> void:
+	if selected_object != null:
+		selected_object.set_selected(false)
+		selected_object = null
 
 
-func action_clear():
-	
-	map_manager.clear_lights()
-	
-	targetable_tiles.clear()
-	reachable_tiles.clear()
+
+
 
 func action_preparation():
 	var current_pawn = pawn_manager.current_pawn
 	var pawns_positions = pawn_manager.pawns.keys()
 	
-	var tiles_to_light: Array = []
 	var light_color: Color = Color.WHITE
 	
 	match current_state:
 		e_game_state.MOVING:
 			var movement = pawn_manager.current_pawn.get_current_max_movement()
-			tiles_to_light = map_manager.get_reachable_tiles(current_pawn.coord, movement, pawns_positions).keys()
+			map_manager.set_reachable_tiles(current_pawn.coord, movement, pawns_positions)
 			light_color = Color.CADET_BLUE
 			
 		e_game_state.ATTACKING_MELEE:
 			var min_range = 1
 			var max_range = 1
-			tiles_to_light = map_manager.get_field_of_view(current_pawn.coord, min_range, max_range, pawns_positions)
+			map_manager.set_field_of_view(current_pawn.coord, min_range, max_range, pawns_positions)
 			light_color = Color.YELLOW
 			
 		e_game_state.ATTACKING_RANGE:
 			var min_range = current_pawn.data.tmp_min_range
 			var max_range = current_pawn.data.tmp_max_range
-			tiles_to_light = map_manager.get_field_of_view(current_pawn.coord, min_range, max_range, pawns_positions)
+			map_manager.set_field_of_view(current_pawn.coord, min_range, max_range, pawns_positions)
 			light_color = Color.YELLOW
 	
 		e_game_state.NEUTRAL:
 			pass
 	
-	map_manager.light_up_tiles(tiles_to_light, light_color)
+	map_manager.light_up_tiles(light_color)
 
 
 func action_watcher(target_coord: Vector2, current_pawn: Pawn) -> void:
@@ -173,37 +178,31 @@ func action_move(target_coord: Vector2, current_pawn: Pawn) -> void:
 	if current_state != e_game_state.MOVING:
 		return
 		
-	var pawns_positions = pawn_manager.pawns.keys()
-	var movement = pawn_manager.current_pawn.get_current_max_movement()
-	var reachables = map_manager.get_reachable_tiles(current_pawn.coord, movement, pawns_positions)
-	if reachables.has(target_coord):
+	if map_manager.reachables.has(target_coord):
 		print("VOILA JE BOUUUUGE")
 		pawn_manager.move_pawn(current_pawn, target_coord, map_manager.grid[target_coord].global_position)
 
-	action_clear()
+	map_manager.map_clear()
 
 func action_melee(target_coord) -> void:
 	
 	if current_state != e_game_state.ATTACKING_MELEE:
 		return
 	
-	if pawn_manager.pawns.has(target_coord) and targetable_tiles.has(target_coord):
+	if pawn_manager.pawns.has(target_coord) and map_manager.reachables.has(target_coord):
 		print("y a un méchant je le tape EN MELEE")
-		var enemy_pawn = pawn_manager.pawns[target_coord]
-		enemy_pawn.queue_free()
-		pawn_manager.pawns.erase(target_coord)
+		pawn_manager.kill_pawn(target_coord)
 
-	action_clear()
+	map_manager.map_clear()
+
 
 func action_range(target_coord) -> void:
 	
 	if current_state != e_game_state.ATTACKING_RANGE:
 		return
-		
-	if pawn_manager.pawns.has(target_coord) and targetable_tiles.has(target_coord):
+	
+	if pawn_manager.pawns.has(target_coord) and map_manager.reachables.has(target_coord):
 		print("y a un méchant je le tape A DISTANCE")
-		var enemy_pawn = pawn_manager.pawns[target_coord]
-		enemy_pawn.queue_free()
-		pawn_manager.pawns.erase(target_coord)
+		pawn_manager.kill_pawn(target_coord)
 
-	action_clear()
+	map_manager.map_clear()

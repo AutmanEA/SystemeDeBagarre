@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://d1eet1l6u25rs" path="res://Scenes/Objects/pawn_manager.tscn" id="5_d1ilt"]
 [ext_resource type="PackedScene" uid="uid://bttdlifb1544" path="res://Scenes/Map/map.tscn" id="6_fdnlq"]
 [ext_resource type="PackedScene" uid="uid://1q8j7o38k1rv" path="res://Scenes/HUD/actions.tscn" id="8_fevyy"]
-[ext_resource type="Script" uid="uid://clwm6rvc243ff" path="res://Scenes/Managers/select_manager.gd" id="10_pdsj5"]
 
 [node name="World" type="Node2D" unique_id=1988099869]
 y_sort_enabled = true
@@ -24,6 +23,3 @@ drag_horizontal_enabled = true
 drag_vertical_enabled = true
 
 [node name="ActionsHUD" parent="." unique_id=1206000801 instance=ExtResource("8_fevyy")]
-
-[node name="SelectManager" type="Node" parent="." unique_id=555990247]
-script = ExtResource("10_pdsj5")
