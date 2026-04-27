@@ -2,7 +2,7 @@ class_name Map
 extends Node2D
 
 signal grid_tile_clicked(coord: Vector2)
-signal grid_tile_hovered(coord: Vector2)
+#signal grid_tile_hovered(coord: Vector2)
 
 const TILE_SCENE = preload("res://Scenes/Map/tile.tscn")
 const HEX_DIRECTIONS = [
@@ -84,10 +84,10 @@ func _on_tile_clicked(tile_instance: Tile) -> void:
 	var coord = Vector2(tile_instance.q, tile_instance.r)
 	grid_tile_clicked.emit(coord)
 
-
-func _on_tile_hovered(tile_instance: Tile) -> void:
-	var coord = Vector2(tile_instance.q, tile_instance.r)
-	grid_tile_hovered.emit(coord)
+#
+#func _on_tile_hovered(tile_instance: Tile) -> void:
+	#var coord = Vector2(tile_instance.q, tile_instance.r)
+	#grid_tile_hovered.emit(coord)
 
 
 func get_tile(target_coord: Vector2) -> Tile:

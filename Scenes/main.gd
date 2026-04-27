@@ -28,7 +28,8 @@ func _ready() -> void:
 	pawn_manager.update_turn_order()
 	
 	#selection setup
-	map_manager.grid_tile_clicked.connect(_on_tile_clicked)
+	map_manager.grid_tile_clicked.connect(_on_object_clicked)
+	pawn_manager.grid_pawns_clicked.connect(_on_object_clicked)
 	
 	#setup camera
 	camera.global_position = map_manager.get_map_center()
@@ -49,18 +50,11 @@ func _setup_battle() -> void:
 	pawn_manager.spawn_pawns(positions, global_positions)
 
 
-func _on_tile_clicked(clicked_object) -> void:
+func _on_object_clicked(clicked_object: Vector2) -> void:
 	if current_state != e_game_state.NEUTRAL:
-		action_watcher(Vector2(clicked_object.x, clicked_object.y), pawn_manager.current_pawn)
+		action_watcher(clicked_object, pawn_manager.current_pawn)
 	else:
-		handle_selection(Vector2(clicked_object.x, clicked_object.y))
-
-
-func _on_object_clicked(clicked_object) -> void:
-	if current_state != e_game_state.NEUTRAL:
-		action_watcher(Vector2(clicked_object.q, clicked_object.r), pawn_manager.current_pawn)
-	else:
-		handle_selection(Vector2(clicked_object.q, clicked_object.r))
+		handle_selection(clicked_object)
 
 
 func _on_hud_action_selected(action: String) -> void:

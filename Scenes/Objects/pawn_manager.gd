@@ -1,6 +1,8 @@
 class_name PawnManager
 extends Node2D
 
+signal grid_pawns_clicked(coord: Vector2)
+
 const PAWN_SCENE = preload("res://Scenes/Objects/pawn.tscn")
 
 @onready var timeline: Timeline = $TimelineHUD
@@ -34,6 +36,7 @@ func add_player_pawn(pawn_data: PawnTypeData) -> void:
 	var new_pawn: Pawn = PAWN_SCENE.instantiate()
 	
 	new_pawn.data = pawn_data
+	new_pawn.pawn_clicked.connect(_on_pawn_clicked)
 	player_pawns.append(new_pawn)
 
 
@@ -77,6 +80,7 @@ func spawn_pawns(positions: Array[Vector2], global_positions: Array[Vector2]) ->
 		new_pawn.data = enemies[i]
 		new_pawn.global_position = global_positions[pos_index]
 		new_pawn.coord = positions[pos_index]
+		new_pawn.pawn_clicked.connect(_on_pawn_clicked)
 		
 		add_child(new_pawn)
 		pawns[positions[pos_index]] = new_pawn
@@ -108,3 +112,7 @@ func move_pawn(pawn: Pawn, new_coord: Vector2, new_position: Vector2) -> void:
 	pawn.coord = new_coord
 	pawn.global_position = new_position
 	pawns[new_coord] = pawn
+
+
+func _on_pawn_clicked(pawn_instance: Pawn) -> void:
+	grid_pawns_clicked.emit(pawn_instance.coord)
