@@ -9,7 +9,7 @@
 script = ExtResource("1_wp7i6")
 available_tiles = Array[ExtResource("2_jolfa")]([null, ExtResource("3_pvgv4"), ExtResource("4_anho1")])
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=920060591]
+[node name="Background" type="ColorRect" parent="." unique_id=920060591]
 z_index = -100
 offset_left = -1364.0
 offset_top = -1138.0
@@ -18,4 +18,4 @@ offset_bottom = 1783.0
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="Tiles" type="Node2D" parent="." unique_id=906751213]
+[node name="MapTiles" type="Node2D" parent="." unique_id=906751213]

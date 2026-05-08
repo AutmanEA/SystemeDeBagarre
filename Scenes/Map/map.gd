@@ -11,7 +11,7 @@ const HEX_DIRECTIONS = [
 ]
 
 # loads tiles objects
-@onready var tiles: Node2D = $Tiles
+@onready var tiles: Node2D = $MapTiles
 
 # tiles type
 @export var available_tiles: Array[TileTypeData]
