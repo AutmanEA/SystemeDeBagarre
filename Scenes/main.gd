@@ -8,6 +8,7 @@ extends Node
 
 @onready var camera: Camera2D = $Camera2D
 
+
 var selected_tile: Tile = null
 var selected_pawn: Pawn = null
 
@@ -36,6 +37,7 @@ func _ready() -> void:
 	
 	#setup action HUD
 	hud.action_selected.connect(_on_hud_action_selected)
+
 
 
 func _setup_battle() -> void:

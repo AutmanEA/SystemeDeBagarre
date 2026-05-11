@@ -13,6 +13,9 @@ const HEX_DIRECTIONS = [
 # loads tiles objects
 @onready var tiles: Node2D = $MapTiles
 
+# map type
+@export var data: MapTypeData
+
 # tiles type
 @export var available_tiles: Array[TileTypeData]
 var tile_data_map: Dictionary = {}
@@ -31,40 +34,107 @@ func _ready() -> void:
 
 
 func generate() -> void:
-	# TODO random map generator
-	const map = [
-		[0,0,1,1,1,1,1,1,1,0,0,0,0,0],
-		[0,0,1,1,1,1,1,0,0,0,0,1,1,0],
-		[0,0,1,1,1,1,1,0,1,1,1,1,0,1],
-		[0,1,2,2,2,2,2,2,2,1,2,2,2,1],
-		[1,1,2,2,2,2,2,2,2,1,2,2,1,1],
-		[1,1,2,2,2,1,1,2,2,2,2,2,1,1],
-		[1,1,2,1,2,2,0,2,2,2,2,2,1,1],
-		[1,1,2,2,2,2,2,2,2,2,2,2,1,1],
-		[1,1,2,2,2,2,2,2,2,2,2,2,1,1],
-		[0,0,1,1,1,1,1,1,1,1,1,1,1,0],
-	]
-	
 	for child in tiles.get_children():
 		child.queue_free()
 	grid.clear()
-	
-	for r in range(map.size()):
-		for q in range(map[r].size()):
-			var new_tile = TILE_SCENE.instantiate()
-			var tile_enum = map[r][q] as g_enums.e_tile
-			new_tile.data = tile_data_map[tile_enum]
-			
-			new_tile.type = tile_enum
-			
-			tiles.add_child(new_tile)
-			new_tile.setup(q, r)
-			
-			new_tile.tile_clicked.connect(_on_tile_clicked)
-			
-			var coord = Vector2(q, r)
-			grid[coord] = new_tile
 
+	var callable = _get_shape_filter(data.shape, data.radius)
+	var coords = _generate_map_tiles_coords(data.radius, data.shape, callable)
+
+	for coord in coords:
+		var tile_enum = _get_procedural_tile_enum(coord)
+		if tile_enum == -1: 
+			continue
+
+		var new_tile = TILE_SCENE.instantiate()
+		var final_enum = tile_enum as g_enums.e_tile 
+		
+		new_tile.data = tile_data_map[final_enum]
+		new_tile.type = final_enum
+		
+		tiles.add_child(new_tile)
+		new_tile.setup(coord.x, coord.y) 
+		new_tile.tile_clicked.connect(_on_tile_clicked)
+		
+		grid[coord] = new_tile
+	
+	_clean_isolated_tiles()
+
+
+func _generate_map_tiles_coords(radius: int, shape: MapTypeData.MapShape, filter_func: Callable) -> Array[Vector2]:
+	var map_tiles_coord: Array[Vector2] = []
+	
+	if shape == MapTypeData.MapShape.RHOMBUS:
+		for x in range(-radius, radius + 1):
+			for y in range(-radius, radius + 1):
+				var coord = Vector2(x, y)
+				if filter_func.call(coord):
+					map_tiles_coord.append(coord)
+					
+	else:
+		for x in range(-radius, radius + 1):
+			for y in range(max(-radius, -x - radius), min(radius, -x + radius) + 1):
+				var coord = Vector2(x, y)
+				if filter_func.call(coord):
+					map_tiles_coord.append(coord)
+					
+	return map_tiles_coord
+
+
+func _get_shape_filter(shape_type: MapTypeData.MapShape, radius: int) -> Callable:
+	match shape_type:
+		MapTypeData.MapShape.ORGANIC:
+			return func(coord: Vector2) -> bool:
+				if coord == Vector2.ZERO: 
+					return true
+					
+				var dist = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
+				var survival_chance = 1.0 - (float(dist) / float(radius + 2))
+				
+				return randf() <= survival_chance
+		_:
+			return func(coord: Vector2) -> bool:
+				return true 
+	return func(c): return true
+
+
+func _get_procedural_tile_enum(_coord: Vector2) -> int:
+	var dist = max(abs(_coord.x), abs(_coord.y), abs(-_coord.x - _coord.y))
+	if dist <= 1:
+		return 2
+	
+	#TODO remplacer suivant par un truc qui gere selon le type de map le taux de murs, de trous etc...
+	
+	var random_val = randf()
+	if random_val < 0.10: 
+		return 0
+	elif random_val < 0.30:
+		return 1
+	else:
+		return 2
+
+
+func _clean_isolated_tiles() -> void:
+	var main_continent: Array = get_reachable_tiles(Vector2.ZERO, 30, []).keys()
+	
+	for coord in grid.keys().duplicate():
+		var tile = grid[coord]
+		
+		if tile.is_walkable:
+			if not main_continent.has(coord):
+				tile.queue_free()
+				grid.erase(coord)
+				
+		else:
+			var touches_continent = false
+			for dir in HEX_DIRECTIONS:
+				if main_continent.has(coord + dir):
+					touches_continent = true
+					break
+					
+			if not touches_continent:
+				tile.queue_free()
+				grid.erase(coord)
 
 func generate_start_position(pawn_number: int) -> Array[Vector2]:
 	var position_array: Array[Vector2]

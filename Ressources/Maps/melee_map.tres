@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MapTypeData" format=3 uid="uid://xavimvd2y631"]
+
+[ext_resource type="Script" uid="uid://dtdlxbokb0rf6" path="res://Data/map_data.gd" id="1_7jnpj"]
+
+[resource]
+script = ExtResource("1_7jnpj")
+map_name = "melee"
+shape = 1
+radius = 4
+foes_distance = 2
+metadata/_custom_type_script = "uid://dtdlxbokb0rf6"
