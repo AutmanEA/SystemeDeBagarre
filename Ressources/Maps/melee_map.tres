@@ -6,6 +6,7 @@
 script = ExtResource("1_7jnpj")
 map_name = "melee"
 shape = 2
+type = 2
 radius = 4
 foes_distance = 2
 metadata/_custom_type_script = "uid://dtdlxbokb0rf6"

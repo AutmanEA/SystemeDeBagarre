@@ -11,8 +11,11 @@ enum MapShape {
 enum MapType {
 	BALANCED,
 	DENSE,
-	THE_LINE,
-	THE_CROSS
+	MOUNTAIN,
+	LAKE,
+	LINE,
+	CROSS,
+	CHAOS
 }
 
 @export var map_name: String = "Unknown"
@@ -20,8 +23,8 @@ enum MapType {
 #biome? -> pour modifier les types de tiles
 #epoch?
 
-@export var shape: MapShape = MapShape.CIRCLE
-@export var type: MapType = MapType.BALANCED
+@export var base_shape: MapShape = MapShape.CIRCLE
+@export var type_shape: MapType = MapType.BALANCED
 @export_range(1,50) var radius: int = 5
 
 @export var foes_distance: int = 0

@@ -38,10 +38,10 @@ func generate() -> void:
 		child.queue_free()
 	grid.clear()
 
-	var coords = _generate_map_tiles_coords(data.radius, data.shape)
+	var coords = _generate_map_tiles_coords(data.radius, data.base_shape)
 
 	for coord in coords:
-		var tile_enum = _get_random_tiletype(data.type, coord)
+		var tile_enum = _get_random_tiletype(data.type_shape, coord)
 		if tile_enum == -1: 
 			continue #en cas d'erreur, aucune tuile ne sera generee
 
@@ -80,44 +80,140 @@ func _generate_map_tiles_coords(radius: int, shape: MapTypeData.MapShape) -> Arr
 					var coord = Vector2(x, y)
 					map_tiles_coord.append(coord)
 		MapTypeData.MapShape.CIRCLE:
-			for x in range(-radius, radius + 1):
-				for y in range(-radius, radius + 1):
-					var coord = Vector2(x, y)
-					var distance = (x * x) + (y * y) + (x * y)
-					if distance <= (radius * radius):
-						map_tiles_coord.append(coord)
+			var r_sq = radius * radius
+			var max_x = floor(radius * 2.0 / sqrt(3.0))
+			for x in range(-max_x, max_x + 1):
+				var delta = (4 * r_sq) - (3 * x * x)
+				if delta < 0:
+					continue 
+				var y_min = ceil((-x - sqrt(delta)) / 2.0)
+				var y_max = floor((-x + sqrt(delta)) / 2.0)
+				for y in range(y_min, y_max + 1):
+					map_tiles_coord.append(Vector2(x, y))
 					
 	return map_tiles_coord
 
 
 func _get_random_tiletype(type: MapTypeData.MapType, coord: Vector2) -> int:
-	if coord == Vector2.ZERO: 
-			return 2
-	
 	var random_val = randf()
-	
 	match type:
-		MapTypeData.MapType.THE_LINE:
+		MapTypeData.MapType.LINE:
+			var dist_from_line = abs(coord.y) 
+			if dist_from_line > 1:
+				var remaining_dist = dist_from_line - 1
+				var remaining_radius = data.radius - 1
+				if remaining_radius <= 0:
+					return 0
+				var ratio = float(remaining_dist) / float(remaining_radius)
+				var survival_chance = 1.0 - (ratio * ratio)
+				if randf() > survival_chance or random_val < 0.10:
+					return 0
+				elif random_val < 0.30:
+					return 1
+				else:
+					return 2
+					
+		MapTypeData.MapType.CROSS:
+			var dist_to_branch = min(abs(coord.x), abs(coord.x + coord.y))
+			if dist_to_branch > 1:
+				var dist_from_center = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
+				var noise = randf_range(0.0, 1.5)
+				var taper_effect = float(dist_from_center) / (float(data.radius) * 1.5)
+				var chaotic_dist = dist_to_branch + noise + taper_effect
+				if chaotic_dist > 3.0:
+					return 0
+			if dist_to_branch == 0:
+				return 2
+			else:
+				if random_val < 0.10: 
+					return 0
+				elif random_val < 0.30:
+					return 1
+				else:
+					return 2
+		MapTypeData.MapType.BALANCED:
+			if random_val < 0.10: 
+				return 0
+			elif random_val < 0.30:
+				return 1
+			else:
+				return 2
+
+		MapTypeData.MapType.DENSE:
+			var dist_from_center = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
+			if dist_from_center <= 1:
+				return 2
+			var frequency = 1.2
+			var wave = sin(coord.x * frequency) + cos(coord.y * frequency) + sin((coord.x + coord.y) * frequency)
+			wave += randf_range(-0.8, 0.8)
+			if wave >= 0:
+				return 1
+			elif random_val < 0.10: 
+				return 0
+			else:
+				return 2
+		MapTypeData.MapType.MOUNTAIN:
+			var dist_from_center = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
+			if dist_from_center <= data.radius / 2.2:
+				return 1
+			elif dist_from_center <= data.radius / 1.5:
+				return 2
+			elif random_val < 0.20:
+				return 0
+			elif random_val < 0.30:
+				return 1
+			else:
+				return 2
 			
-			var orientation = abs(coord.y) if random_val > 0.5 else abs(coord.x)
+		MapTypeData.MapType.LAKE:
+			var dist_from_center = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
+			if dist_from_center <= data.radius / 2.2:
+				return 0
+			elif dist_from_center <= data.radius / 1.5:
+				return 2
+			elif random_val < 0.30:
+				return 1
+			else:
+				return 2
 			
-			var dist = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
-			var survival_chance = 1.0 - (float(dist) / float(data.radius + 2))
-			if randf() <= survival_chance:
-				random_val -= 0.5
+		MapTypeData.MapType.CHAOS:
+			var dist_from_center = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
+			if dist_from_center <= 1:
+				return 2
+			var frequency = 1.2
+			var wave = sin(coord.x * frequency) + cos(coord.y * frequency) + sin((coord.x + coord.y) * frequency)
+			wave += randf_range(-0.8, 0.8)
+			if wave > 1.2:
+				return 0
+			elif random_val < 0.30: 
+				return 1
+			else:
+				return 2
 		_:
-			pass
-			
-	if random_val < 0.10: 
-		return 0
-	elif random_val < 0.30:
-		return 1
-	else:
-		return 2
+			if random_val < 0.10: 
+				return 0
+			elif random_val < 0.30:
+				return 1
+			else:
+				return 2
+				
+	return 2
 
 
 func _clean_isolated_tiles() -> void:
-	var main_continent: Array = get_reachable_tiles(Vector2.ZERO, 30, []).keys()
+	var start_coord = Vector2.ZERO
+	var min_dist = 99999
+	
+	for coord in grid.keys():
+		if grid[coord].is_walkable:
+			var dist = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
+			if dist < min_dist:
+				min_dist = dist
+				start_coord = coord
+				if dist == 0:
+					break
+	
+	var main_continent: Array = get_reachable_tiles(start_coord, 30, []).keys()
 	
 	for coord in grid.keys().duplicate():
 		var tile = grid[coord]

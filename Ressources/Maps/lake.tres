@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MapTypeData" format=3 uid="uid://bax5wksj8wxu7"]
+
+[ext_resource type="Script" uid="uid://dtdlxbokb0rf6" path="res://Data/map_data.gd" id="1_82d5h"]
+
+[resource]
+script = ExtResource("1_82d5h")
+map_name = "lake"
+type_shape = 3
+radius = 7
+foes_distance = 10
+metadata/_custom_type_script = "uid://dtdlxbokb0rf6"

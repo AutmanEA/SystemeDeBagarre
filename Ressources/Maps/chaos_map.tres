@@ -5,8 +5,7 @@
 [resource]
 script = ExtResource("1_mosf4")
 map_name = "chaos"
-shape = 1
-type = 2
+type_shape = 6
 radius = 7
 foes_distance = 5
 metadata/_custom_type_script = "uid://dtdlxbokb0rf6"
