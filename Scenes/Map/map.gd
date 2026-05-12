@@ -38,13 +38,12 @@ func generate() -> void:
 		child.queue_free()
 	grid.clear()
 
-	var callable = _get_shape_filter(data.shape, data.radius)
-	var coords = _generate_map_tiles_coords(data.radius, data.shape, callable)
+	var coords = _generate_map_tiles_coords(data.radius, data.shape)
 
 	for coord in coords:
-		var tile_enum = _get_procedural_tile_enum(coord)
+		var tile_enum = _get_random_tiletype(data.type, coord)
 		if tile_enum == -1: 
-			continue
+			continue #en cas d'erreur, aucune tuile ne sera generee
 
 		var new_tile = TILE_SCENE.instantiate()
 		var final_enum = tile_enum as g_enums.e_tile 
@@ -61,51 +60,54 @@ func generate() -> void:
 	_clean_isolated_tiles()
 
 
-func _generate_map_tiles_coords(radius: int, shape: MapTypeData.MapShape, filter_func: Callable) -> Array[Vector2]:
+func _generate_map_tiles_coords(radius: int, shape: MapTypeData.MapShape) -> Array[Vector2]:
 	var map_tiles_coord: Array[Vector2] = []
 	
-	if shape == MapTypeData.MapShape.RHOMBUS:
-		for x in range(-radius, radius + 1):
-			for y in range(-radius, radius + 1):
-				var coord = Vector2(x, y)
-				if filter_func.call(coord):
+	match shape:
+		MapTypeData.MapShape.RHOMBUS:
+			for x in range(-radius, radius + 1):
+				for y in range(-radius, radius + 1):
+					var coord = Vector2(x, y)
 					map_tiles_coord.append(coord)
-					
-	else:
-		for x in range(-radius, radius + 1):
-			for y in range(max(-radius, -x - radius), min(radius, -x + radius) + 1):
-				var coord = Vector2(x, y)
-				if filter_func.call(coord):
+		MapTypeData.MapShape.RECTANGLE:
+			for x in range(-radius, radius + 1):
+				for y in range(-radius - floor(x / 2.0) , radius - floor(x / 2.0)  + 1):
+					var coord = Vector2(x, y)
 					map_tiles_coord.append(coord)
+		MapTypeData.MapShape.HEXAGON:
+			for x in range(-radius, radius + 1):
+				for y in range(max(-radius, -x - radius), min(radius, -x + radius) + 1):
+					var coord = Vector2(x, y)
+					map_tiles_coord.append(coord)
+		MapTypeData.MapShape.CIRCLE:
+			for x in range(-radius, radius + 1):
+				for y in range(-radius, radius + 1):
+					var coord = Vector2(x, y)
+					var distance = (x * x) + (y * y) + (x * y)
+					if distance <= (radius * radius):
+						map_tiles_coord.append(coord)
 					
 	return map_tiles_coord
 
 
-func _get_shape_filter(shape_type: MapTypeData.MapShape, radius: int) -> Callable:
-	match shape_type:
-		MapTypeData.MapShape.ORGANIC:
-			return func(coord: Vector2) -> bool:
-				if coord == Vector2.ZERO: 
-					return true
-					
-				var dist = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
-				var survival_chance = 1.0 - (float(dist) / float(radius + 2))
-				
-				return randf() <= survival_chance
-		_:
-			return func(coord: Vector2) -> bool:
-				return true 
-	return func(c): return true
-
-
-func _get_procedural_tile_enum(_coord: Vector2) -> int:
-	var dist = max(abs(_coord.x), abs(_coord.y), abs(-_coord.x - _coord.y))
-	if dist <= 1:
-		return 2
-	
-	#TODO remplacer suivant par un truc qui gere selon le type de map le taux de murs, de trous etc...
+func _get_random_tiletype(type: MapTypeData.MapType, coord: Vector2) -> int:
+	if coord == Vector2.ZERO: 
+			return 2
 	
 	var random_val = randf()
+	
+	match type:
+		MapTypeData.MapType.THE_LINE:
+			
+			var orientation = abs(coord.y) if random_val > 0.5 else abs(coord.x)
+			
+			var dist = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
+			var survival_chance = 1.0 - (float(dist) / float(data.radius + 2))
+			if randf() <= survival_chance:
+				random_val -= 0.5
+		_:
+			pass
+			
 	if random_val < 0.10: 
 		return 0
 	elif random_val < 0.30:

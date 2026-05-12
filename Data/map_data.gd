@@ -3,8 +3,16 @@ extends Resource
 
 enum MapShape {
 	CIRCLE,
+	HEXAGON,
+	RECTANGLE,
 	RHOMBUS,
-	ORGANIC
+}
+
+enum MapType {
+	BALANCED,
+	DENSE,
+	THE_LINE,
+	THE_CROSS
 }
 
 @export var map_name: String = "Unknown"
@@ -13,6 +21,7 @@ enum MapShape {
 #epoch?
 
 @export var shape: MapShape = MapShape.CIRCLE
+@export var type: MapType = MapType.BALANCED
 @export_range(1,50) var radius: int = 5
 
 @export var foes_distance: int = 0
