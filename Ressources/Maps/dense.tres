@@ -7,5 +7,5 @@ script = ExtResource("1_j8t7r")
 map_name = "dense"
 type_shape = 1
 radius = 7
-foes_distance = 10
+start_distance = 3
 metadata/_custom_type_script = "uid://dtdlxbokb0rf6"

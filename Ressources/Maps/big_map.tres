@@ -5,7 +5,6 @@
 [resource]
 script = ExtResource("1_fyc54")
 map_name = "big"
-type = 2
 radius = 7
-foes_distance = 10
+start_distance = 4
 metadata/_custom_type_script = "uid://dtdlxbokb0rf6"

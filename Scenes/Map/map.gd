@@ -247,7 +247,7 @@ func _clean_isolated_tiles() -> void:
 			grid[coord] = new_tile
 
 
-func generate_start_position() -> Array[Vector2]:
+func generate_start_position(ally_pawn_count: int, enemies_pawn_count: int) -> Array[Vector2]:
 	var position_array: Array[Vector2]
 	
 	var start_coord = _find_first_free_coord_from()
@@ -255,12 +255,25 @@ func generate_start_position() -> Array[Vector2]:
 	var random_index = randi_range(0, 5)
 	var direction = HEX_DIRECTIONS[random_index]
 	var opposite = HEX_DIRECTIONS[(random_index + 3) % 6]
-
-	var spawn_zone = _find_first_free_coord_from(start_coord + direction * data.start_distance)
-	var spawn_zone_opposite = _find_first_free_coord_from(start_coord + opposite * data.start_distance)
 	
-	position_array.append(spawn_zone)
-	position_array.append(spawn_zone_opposite)
+	var ally_spawn_zone = _find_first_free_coord_from(start_coord + direction * data.start_distance)
+	var enemies_spawn_zone = _find_first_free_coord_from(start_coord + opposite * data.start_distance)
+	
+	# ATTENTION : boucle infinite possible
+	var i: int = 0
+	while i < ally_pawn_count:
+		ally_spawn_zone = _find_first_free_coord_from(ally_spawn_zone + HEX_DIRECTIONS[randi_range(0, 5)] * (i + randi() % 3))
+		if not position_array.has(ally_spawn_zone):
+			position_array.append(ally_spawn_zone)
+			i += 1
+		
+	# ATTENTION : boucle infinite possible
+	i = 0
+	while i < enemies_pawn_count:
+		enemies_spawn_zone = _find_first_free_coord_from(enemies_spawn_zone + HEX_DIRECTIONS[randi_range(0, 5)] * (i + randi() % 3))
+		if not position_array.has(enemies_spawn_zone):
+			position_array.append(enemies_spawn_zone)
+			i += 1
 	
 	return position_array
 

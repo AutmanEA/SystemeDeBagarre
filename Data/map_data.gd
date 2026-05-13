@@ -35,4 +35,4 @@ enum StartType {
 @export_range(1,50) var radius: int = 5
 
 @export var start_type: StartType = StartType.GROUPED
-@export var start_distance: int = 0
+@export_range(1,50) var start_distance: int = 1

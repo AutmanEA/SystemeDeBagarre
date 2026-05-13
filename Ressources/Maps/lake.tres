@@ -7,5 +7,5 @@ script = ExtResource("1_82d5h")
 map_name = "lake"
 type_shape = 3
 radius = 7
-foes_distance = 10
+start_distance = 5
 metadata/_custom_type_script = "uid://dtdlxbokb0rf6"

@@ -22,11 +22,11 @@ var current_pawn: Pawn = null
 @export var data_enemy: PawnTypeData
 
 var enemies: Array[PawnTypeData] = []
-var enemy_count: int = 0
 
 func _ready() -> void:
 	#je met ici le player main character a la main,
 	#mais faudra sans doute que y ait un truc de creation de personnage
+	add_player_pawn(data_ally)
 	add_player_pawn(data_ally)
 
 
@@ -45,19 +45,19 @@ func generate() -> int:
 	# TODO change following :
 
 	#TODO replace this par un random ?
-	enemy_count = 1
 	
 	#TODO systeme de selection de datas d'ennemis, selon difficulté, étage...
 	#TODO systeme de room? genre selon la room tu spawn x ou y
 	#for i in range(enemy_count):
 	enemies.append(data_enemy)
+	enemies.append(data_enemy)
 		
-	return player_pawns.size() + enemy_count
+	return player_pawns.size() + enemies.size()
 
 
 func spawn_pawns(positions: Array[Vector2], global_positions: Array[Vector2]) -> void:
 	
-	if positions.size() < (player_pawns.size() + enemy_count):
+	if positions.size() < (player_pawns.size() + enemies.size()):
 		push_error("ERROR_SPAWN")
 		return
 		
@@ -75,7 +75,7 @@ func spawn_pawns(positions: Array[Vector2], global_positions: Array[Vector2]) ->
 		pos_index += 1
 		
 	#spawn enemy pawns
-	for i in range(enemy_count):
+	for i in range(enemies.size()):
 		var new_pawn: Pawn = PAWN_SCENE.instantiate()
 		new_pawn.data = enemies[i]
 		new_pawn.global_position = global_positions[pos_index]
