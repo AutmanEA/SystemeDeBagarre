@@ -12,8 +12,7 @@ var q
 var r
 
 @export var type : g_enums.e_tile = g_enums.e_tile.Null
-@export var is_walkable = false
-@export var is_opaque = false
+
 @export var is_selected = false
 @export var is_hovered = false
 
@@ -46,8 +45,6 @@ func setup_type():
 		self.input_pickable = false
 		return
 
-	self.is_walkable = data.is_walkable
-	self.is_opaque = data.is_opaque
 	self.input_pickable = data.is_pickable
 	$Tile_Sprite.z_index = data.z_order
 	
@@ -59,6 +56,8 @@ func setup_type():
 	if data.base_colors.size() > 0:
 		if data.base_colors.size() == 1:
 			target_color = _get_varied_color(data.base_colors[0])
+		elif data.base_colors.size() == 2:
+			target_color = data.base_colors[0] if randf() > 0.5 else data.base_colors[1]
 		else:
 			var pattern = posmod(q - r, data.base_colors.size())
 			target_color = data.base_colors[pattern]

@@ -18,6 +18,13 @@ enum MapType {
 	CHAOS
 }
 
+enum StartType {
+	GROUPED,
+	SEPARATED,
+	SURROUNDED,
+	OPPOSED
+}
+
 @export var map_name: String = "Unknown"
 
 #biome? -> pour modifier les types de tiles
@@ -27,4 +34,5 @@ enum MapType {
 @export var type_shape: MapType = MapType.BALANCED
 @export_range(1,50) var radius: int = 5
 
-@export var foes_distance: int = 0
+@export var start_type: StartType = StartType.GROUPED
+@export var start_distance: int = 0

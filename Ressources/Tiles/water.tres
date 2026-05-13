@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TileTypeData" format=3 uid="uid://2t6mxtveqdn4"]
+
+[ext_resource type="Script" uid="uid://rjahbpdt3k7" path="res://Data/tile_data.gd" id="1_b35jd"]
+
+[resource]
+script = ExtResource("1_b35jd")
+tile_name = "water"
+is_opaque = false
+is_pickable = false
+altitude_min = -15.0
+altitude_max = -15.0
+base_colors = Array[Color]([Color(0.4757262, 0.68495446, 0.87813663, 1), Color(0.5041443, 0.7059475, 0.88931876, 1)])
+thickness_darken = 0.05
+metadata/_custom_type_script = "uid://rjahbpdt3k7"

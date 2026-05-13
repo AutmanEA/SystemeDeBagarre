@@ -44,7 +44,7 @@ func _setup_battle() -> void:
 	var pawn_count = pawn_manager.generate()
 	map_manager.generate()
 	
-	var positions: Array[Vector2] = map_manager.generate_start_position(pawn_count)
+	var positions: Array[Vector2] = map_manager.generate_start_position()
 	var global_positions: Array[Vector2] = []
 	for i in range(len(positions)):
 		global_positions.append(map_manager.get_tile(positions[i]).global_position)

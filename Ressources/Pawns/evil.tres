@@ -5,10 +5,9 @@
 [resource]
 script = ExtResource("1_tpngs")
 pawn_name = "Enny L'ennemi"
-tmp_min_range = 5
-tmp_max_range = 7
-init = 16
+tmp_max_range = 100
+init = 500
 is_controlable = false
-speed = 1
+speed = 100
 color = Color(0.62352943, 0.42745098, 1, 1)
 metadata/_custom_type_script = "uid://c8bks0j6ww3py"

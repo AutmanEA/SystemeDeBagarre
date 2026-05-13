@@ -45,12 +45,12 @@ func generate() -> int:
 	# TODO change following :
 
 	#TODO replace this par un random ?
-	enemy_count = 2
+	enemy_count = 1
 	
 	#TODO systeme de selection de datas d'ennemis, selon difficulté, étage...
 	#TODO systeme de room? genre selon la room tu spawn x ou y
-	for i in range(enemy_count):
-		enemies.append(data_enemy)
+	#for i in range(enemy_count):
+	enemies.append(data_enemy)
 		
 	return player_pawns.size() + enemy_count
 

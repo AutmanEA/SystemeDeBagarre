@@ -43,7 +43,7 @@ func generate() -> void:
 	for coord in coords:
 		var tile_enum = _get_random_tiletype(data.type_shape, coord)
 		if tile_enum == -1: 
-			continue #en cas d'erreur, aucune tuile ne sera generee
+			continue
 
 		var new_tile = TILE_SCENE.instantiate()
 		var final_enum = tile_enum as g_enums.e_tile 
@@ -131,6 +131,7 @@ func _get_random_tiletype(type: MapTypeData.MapType, coord: Vector2) -> int:
 					return 1
 				else:
 					return 2
+					
 		MapTypeData.MapType.BALANCED:
 			if random_val < 0.10: 
 				return 0
@@ -152,6 +153,7 @@ func _get_random_tiletype(type: MapTypeData.MapType, coord: Vector2) -> int:
 				return 0
 			else:
 				return 2
+				
 		MapTypeData.MapType.MOUNTAIN:
 			var dist_from_center = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
 			if dist_from_center <= data.radius / 2.2:
@@ -200,50 +202,65 @@ func _get_random_tiletype(type: MapTypeData.MapType, coord: Vector2) -> int:
 	return 2
 
 
-func _clean_isolated_tiles() -> void:
-	var start_coord = Vector2.ZERO
-	var min_dist = 99999
+func _find_first_free_coord_from(start_coord: Vector2 = Vector2.ZERO) -> Vector2:
+	var result: Vector2 = start_coord
+	var min_dist = 1000
 	
 	for coord in grid.keys():
-		if grid[coord].is_walkable:
-			var dist = max(abs(coord.x), abs(coord.y), abs(-coord.x - coord.y))
+		if grid[coord].data.is_walkable:
+			var diff = coord - start_coord
+			var dist = max(abs(diff.x), abs(diff.y), abs(-diff.x - diff.y))
+			
 			if dist < min_dist:
 				min_dist = dist
-				start_coord = coord
+				result = coord
 				if dist == 0:
 					break
-	
-	var main_continent: Array = get_reachable_tiles(start_coord, 30, []).keys()
-	
-	for coord in grid.keys().duplicate():
-		var tile = grid[coord]
-		
-		if tile.is_walkable:
-			if not main_continent.has(coord):
-				tile.queue_free()
-				grid.erase(coord)
-				
-		else:
-			var touches_continent = false
-			for dir in HEX_DIRECTIONS:
-				if main_continent.has(coord + dir):
-					touches_continent = true
-					break
 					
-			if not touches_continent:
-				tile.queue_free()
-				grid.erase(coord)
+	return result
 
-func generate_start_position(pawn_number: int) -> Array[Vector2]:
-	var position_array: Array[Vector2]
-	#TODO replace this by a random start map position finder
+
+func _clean_isolated_tiles() -> void:
+	var start_coord = _find_first_free_coord_from()
+	var continent: Array = get_reachable_tiles(start_coord, 100, []).keys()
+	
 	for coord in grid.keys():
-		var tile = get_tile(coord)
-		if tile and tile.is_walkable:
-			position_array.append(coord)
-			pawn_number -= 1
-		if pawn_number <= 0:
-			break
+		var old_tile = grid[coord]
+		
+		if (old_tile.type as int) == 2 and not continent.has(coord):
+			var new_enum = 0
+			if randf() < 0.70:
+				new_enum = 1
+				
+			var final_enum = new_enum as g_enums.e_tile
+			
+			old_tile.queue_free()
+			
+			var new_tile = TILE_SCENE.instantiate()
+			new_tile.data = tile_data_map[final_enum]
+			new_tile.type = final_enum
+			
+			tiles.add_child(new_tile)
+			new_tile.setup(coord.x, coord.y) 
+			new_tile.tile_clicked.connect(_on_tile_clicked)
+			
+			grid[coord] = new_tile
+
+
+func generate_start_position() -> Array[Vector2]:
+	var position_array: Array[Vector2]
+	
+	var start_coord = _find_first_free_coord_from()
+	
+	var random_index = randi_range(0, 5)
+	var direction = HEX_DIRECTIONS[random_index]
+	var opposite = HEX_DIRECTIONS[(random_index + 3) % 6]
+
+	var spawn_zone = _find_first_free_coord_from(start_coord + direction * data.start_distance)
+	var spawn_zone_opposite = _find_first_free_coord_from(start_coord + opposite * data.start_distance)
+	
+	position_array.append(spawn_zone)
+	position_array.append(spawn_zone_opposite)
 	
 	return position_array
 
@@ -325,7 +342,7 @@ func get_reachable_tiles(start_coord: Vector2, distance: int, coords_to_avoid: A
 				if grid.has(neighbor_coord):
 					var neighbor = grid[neighbor_coord]
 
-					if not came_from.has(neighbor_coord) and neighbor.is_walkable and not coords_to_avoid.has(neighbor_coord):
+					if not came_from.has(neighbor_coord) and neighbor.data.is_walkable and not coords_to_avoid.has(neighbor_coord):
 						came_from[neighbor_coord] = hex_coord
 						fringes[k].append(neighbor)
 
@@ -345,8 +362,9 @@ func is_path_valid(distance: float, start_coord: Vector2, target_coord: Vector2,
 		var lerp_t = float(i) / distance
 		
 		if path:
-			var step_coord = start.lerp(target, lerp_t).round()
-			if not grid.has(step_coord) or grid[step_coord].is_opaque or coords_to_avoid.has(step_coord):
+			var frac_coord = start.lerp(target, lerp_t)
+			var step_coord = Math.hex_round(frac_coord)
+			if not grid.has(step_coord) or grid[step_coord].data.is_opaque or coords_to_avoid.has(step_coord):
 				path = false
 	
 	return path
@@ -380,7 +398,7 @@ func get_field_of_view(start_coord: Vector2, range_min: int, range_max: int, coo
 		fov.append(start_coord)
 	
 	for cell in grid:
-		if cell != start_coord and not grid[cell].is_opaque and is_tile_visible(start_coord, cell, coords_to_avoid):
+		if cell != start_coord and not grid[cell].data.is_opaque and grid[cell].data.type != g_enums.e_tile.Null and is_tile_visible(start_coord, cell, coords_to_avoid):
 			var distance = Math.get_distance(start_coord, cell)
 			if distance >= range_min and distance <= range_max:
 				fov.append(cell)

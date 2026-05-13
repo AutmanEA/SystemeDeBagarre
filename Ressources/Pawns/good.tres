@@ -5,6 +5,8 @@
 [resource]
 script = ExtResource("1_l5bnc")
 pawn_name = "Aly l'allié"
-tmp_max_range = 5
+tmp_max_range = 100
+init = 510
+speed = 100
 color = Color(0.6799096, 0.87585044, 0.6664478, 1)
 metadata/_custom_type_script = "uid://c8bks0j6ww3py"

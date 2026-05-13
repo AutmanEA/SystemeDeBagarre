@@ -1,22 +1,23 @@
 [gd_scene format=3 uid="uid://bttdlifb1544"]
 
 [ext_resource type="Script" uid="uid://bv548diul0fus" path="res://Scenes/Map/map.gd" id="1_wp7i6"]
-[ext_resource type="Resource" uid="uid://bax5wksj8wxu7" path="res://Ressources/Maps/lake.tres" id="2_anho1"]
+[ext_resource type="Resource" uid="uid://doah8h3v5pa7v" path="res://Ressources/Maps/chaos_map.tres" id="2_anho1"]
 [ext_resource type="Script" uid="uid://rjahbpdt3k7" path="res://Data/tile_data.gd" id="2_jolfa"]
 [ext_resource type="Resource" uid="uid://btypv0o1bb3a7" path="res://Ressources/Tiles/wall.tres" id="3_pvgv4"]
 [ext_resource type="Resource" uid="uid://seswfdm85xve" path="res://Ressources/Tiles/floor.tres" id="4_anho1"]
+[ext_resource type="Resource" uid="uid://2t6mxtveqdn4" path="res://Ressources/Tiles/water.tres" id="4_fyo8k"]
 
 [node name="Map" type="Node2D" unique_id=100330892]
 script = ExtResource("1_wp7i6")
 data = ExtResource("2_anho1")
-available_tiles = Array[ExtResource("2_jolfa")]([null, ExtResource("3_pvgv4"), ExtResource("4_anho1")])
+available_tiles = Array[ExtResource("2_jolfa")]([ExtResource("4_fyo8k"), ExtResource("3_pvgv4"), ExtResource("4_anho1")])
 
 [node name="Background" type="ColorRect" parent="." unique_id=920060591]
 z_index = -100
-offset_left = -1364.0
-offset_top = -1138.0
-offset_right = 2503.0
-offset_bottom = 1783.0
+offset_left = -1409.0
+offset_top = -1190.0
+offset_right = 2458.0
+offset_bottom = 1731.0
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
